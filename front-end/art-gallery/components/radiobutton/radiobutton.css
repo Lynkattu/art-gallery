@@ -1,0 +1,33 @@
+.radiobutton-ul {
+    display: flex;
+    list-style-type: none;
+    padding: 10px;
+    margin: 0;
+}
+
+.radiobutton-ul-li {
+    margin-right: 15px;
+    border: 2px solid #ccc;
+    padding: 5px 10px;
+    border-radius: 10px;
+    background-color: #999;
+    cursor: pointer;
+}
+
+.active {
+    margin-right: 15px;
+    background-color: #646cff;
+    color: white;
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 5px 10px;
+    border: 2px solid #646cff;
+}
+
+.active:last-child {
+    margin-right: 0;
+}
+
+.radiobutton-ul-li:last-child {
+    margin-right: 0;
+}

@@ -1,0 +1,20 @@
+--> create arts table 
+CREATE TABLE users (
+    id BINARY(16) PRIMARY KEY,
+    username VARCHAR(64) NOT NULL UNIQUE,
+    firstName VARCHAR(64) NOT NULL,
+    lastName VARCHAR(64) NOT NULL,
+    email VARCHAR(254) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+--> Add new art to arts table
+INSERT INTO arts (artFilePath, artName, artDescription)
+VALUES ('1738687579042-893925605-Abyss Dread Lord.jpg', 'Abyss Dread Lord', 'Dark elf dread lord.');
+
+--> Show 
+SELECT * FROM arts;
+
+SELECT * FROM arts WHERE artFilePath = '1738687579042-893925605-Abyss Dread Lord.jpg';
+

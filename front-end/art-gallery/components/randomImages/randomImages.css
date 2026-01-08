@@ -1,0 +1,26 @@
+.random-image ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.random-image ul li {
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+.random-image ul li > img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.random-image ul li > img:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
