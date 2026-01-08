@@ -1,0 +1,9 @@
+.loginform {
+  margin: 0 auto;
+}
+
+.loginform ul {
+  text-decoration: none;
+  list-style: none;
+  padding: 0;
+}

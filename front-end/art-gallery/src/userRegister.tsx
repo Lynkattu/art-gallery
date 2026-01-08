@@ -1,6 +1,8 @@
 import './userRegister.css';
 import { useState } from "react";
 
+import Topbar from '../components/topbar/topbar';
+
 function UserRegister() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -41,28 +43,32 @@ function UserRegister() {
   };
 
   return (
-    <form className="registerform" onSubmit={handleSubmit}>
-      <ul>
-        <li>
-          <input name="firstName" onChange={handleChange} placeholder='Enter first name'/>
-        </li>
-        <li>
-          <input name="lastName" onChange={handleChange} placeholder='Enter last name'/>
-        </li>
-        <li>
-          <input name="username" onChange={handleChange} placeholder='Enter username'/>
-        </li>
-        <li>
-          <input name="email" type="email" onChange={handleChange} placeholder='Enter email' />
-        </li>
-        <li>
-          <input name="password" type="password" onChange={handleChange} placeholder='Enter password' />
-        </li>
-        <li>
-          <button type="submit">Submit</button>
-        </li>
-      </ul>
-    </form>
+    <div>
+      <Topbar/>
+      <h2>Registration</h2>
+      <form className="registerform" onSubmit={handleSubmit}>
+        <ul>
+          <li>
+            <input name="firstName" onChange={handleChange} placeholder='Enter first name'/>
+          </li>
+          <li>
+            <input name="lastName" onChange={handleChange} placeholder='Enter last name'/>
+          </li>
+          <li>
+            <input name="username" onChange={handleChange} placeholder='Enter username'/>
+          </li>
+          <li>
+            <input name="email" type="email" onChange={handleChange} placeholder='Enter email' />
+          </li>
+          <li>
+            <input name="password" type="password" onChange={handleChange} placeholder='Enter password' />
+          </li>
+          <li>
+            <button type="submit">Submit</button>
+          </li>
+        </ul>
+      </form>
+    </div>
   );
 }
 

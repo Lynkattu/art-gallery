@@ -33,14 +33,17 @@ export default function(app) {
     app.post("/users/login", async (req, res) => {
         const { email, password } = req.body;
         try {
+            //get id and password hash from db by email
             const [rows] = await pool.query(
                 "SELECT id, password FROM users WHERE email = ?",
                 [email]
             );
+            //check if user exists
             if (rows.length === 0) {
                 return res.status(400).json({ error: "Invalid email or password" });
             }
             const user = rows[0];
+            //compare password with hash
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(400).json({ error: "Invalid email or password" });

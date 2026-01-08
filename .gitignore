@@ -14,6 +14,8 @@ dist-ssr
 
 # Editor directories and files
 /back-end/images/*
+!/back-end/images/
+!/back-end/images/.gitkeep
 .vscode/*
 !.vscode/extensions.json
 .idea
