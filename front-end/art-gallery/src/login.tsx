@@ -23,17 +23,18 @@ function Login() {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
     // send formData to backend
-    const response = await fetch("http://127.0.0.1:5000/users/login", {
+    const res = await fetch("http://localhost:5000/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formData),
+      credentials: "include",
     });
 
-    const data = await response.json();
+    const data = await res.json();
 
-    if (response.ok) {
+    if (res.ok) {
       console.log("Login success", data);
       navigate('/');
     } else {
