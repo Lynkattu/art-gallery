@@ -1,6 +1,8 @@
 import bcrypt from "bcryptjs";
 import pool from '../db/db.js';
 import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
+import authentication from '../middleware/authentication.js';
 
 export default function(app) {
 
@@ -48,10 +50,35 @@ export default function(app) {
             if (!isMatch) {
                 return res.status(400).json({ error: "Invalid email or password" });
             }
-            res.json({ message: "Login successful", userId: user.id });
+            //jwt token generation
+            const token = jwt.sign(
+                { email: user.email },
+                process.env.JWT_SECRET,
+                { expiresIn: "1h" }
+            );
+            //set token in httpOnly cookie
+            res.cookie("token", token, {
+                httpOnly: true,
+                secure: false, // set to true in production with HTTPS
+                sameSite: "lax",
+                maxAge: 15 * 60 * 1000
+            });
+
+            res.json({ message: "Logged in successfully" });
         } catch (err) {
             console.error("DB error during login:", err);
             res.status(500).json({ error: "Failed to login" });
         }
+    });
+
+    // User logout
+    app.post("/users/logout", (req, res) => {
+        res.clearCookie("token");
+        res.json({ message: "Logged out" });
+    });
+
+    // Get user profile
+    app.get("/users/profile", authentication, (req, res) => {
+        res.json({ user: req.user });
     });
 }

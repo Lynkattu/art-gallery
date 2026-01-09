@@ -4,19 +4,22 @@ import multer from 'multer';
 import cors from 'cors';
 import artRoutes from './routes/artRoutes.js'; // note the .js extension
 import userRoutes from "./routes/userRoutes.js";
+import cookieParser from 'cookie-parser';
 
+dotenv.config();
 
 const app = express();
-app.use(express.json());
+app.use(cookieParser());
+
 app.use(express.urlencoded({ extended: true }));
 app.use("/images", express.static("images")); // Serve static files from images directory
 app.use("/site_images", express.static("site_images")); // Serve static files from site_images directory
-
-dotenv.config();
 // Enable CORS for requests from the front-end
 app.use(cors({
-  origin: "http://localhost:5173"
+  origin: "http://localhost:5173",
+  credentials: true
 }));
+app.use(express.json());
 
 //-----------Multer for file upload and download---------------
 const storage = multer.diskStorage({
