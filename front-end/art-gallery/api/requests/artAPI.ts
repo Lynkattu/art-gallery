@@ -1,6 +1,6 @@
   import type { ArtsResponse } from '../models/artModel.ts';
   import type {ArtPath} from '../models/artPathModel.ts';
-
+  // ---------- art ----------------------------------------------------------------------------
   // fetch all art info from the backend API
   async function fetchAllArt(): Promise<void> {
     try {
@@ -29,4 +29,14 @@
     }
   }
 
-  export { fetchAllArt, fetchRandomArtPaths };
+  //------------art end-------------------------------------------------------------------------
+  //------------users----------------------------------------------------------------------------
+  async function getProfile () {
+    const res = await fetch("http://localhost:5000/users/profile", {
+      credentials: "include"
+    });
+    return res;
+  }
+  //------------users end------------------------------------------------------------------------
+
+  export { fetchAllArt, fetchRandomArtPaths, getProfile };
