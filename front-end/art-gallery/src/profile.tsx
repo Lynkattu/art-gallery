@@ -1,15 +1,15 @@
 import { use, useEffect, useState } from 'react';
-import {getProfile} from '../api/requests/artAPI.ts';
-import type {UserProfile} from '../api/models/userProfile.ts';
+import { getUserProfile } from '../api/userAPI.ts';
+import type { UserProfile } from '../models/userProfile.ts';
 import Topbar from '../components/topbar/topbar.tsx';
 
 function profile() {
 
   const [data, setData] = useState<UserProfile | null>(null);
 
-  async function getUserProfile() {
+  async function fetchUserProfile() {
     try {
-      const response = await getProfile();        // API call
+      const response = await getUserProfile();        // API call
       if (!response.ok) throw new Error("Fetch failed");
       const profileData = await response.json();
       console.log("Profile data:", profileData.user);
@@ -22,7 +22,7 @@ function profile() {
 
 
   useEffect(() => {
-    getUserProfile();
+    fetchUserProfile();
   }, []);
   
   return data === null ? 

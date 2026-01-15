@@ -1,6 +1,6 @@
 import './randomImages.css';
 import { useEffect, useState } from 'react';
-import { fetchRandomArtPaths } from '../../api/requests/artAPI.ts';
+import { fetchRandomArtPaths } from '../../api/artAPI.ts';
 
 type Props = {
     imageCount?: number;

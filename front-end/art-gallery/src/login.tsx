@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 
 import Topbar from '../components/topbar/topbar';
+import { postUserLogin } from '../api/userAPI.ts';
 
 function Login() {
   const navigate = useNavigate();
@@ -23,15 +24,7 @@ function Login() {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
     // send formData to backend
-    const res = await fetch("http://localhost:5000/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-      credentials: "include",
-    });
-
+    const res = await postUserLogin(formData);
     const data = await res.json();
 
     if (res.ok) {
