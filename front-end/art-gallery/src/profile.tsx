@@ -1,29 +1,25 @@
-import { use, useEffect, useState } from 'react';
-import { getUserProfile } from '../api/userAPI.ts';
+import { useContext, useEffect, useState } from 'react';
 import type { UserProfile } from '../models/userProfile.ts';
 import Topbar from '../components/topbar/topbar.tsx';
+import { UserContext } from '../contexts/userContext.tsx';
+import { useNavigate } from 'react-router-dom';
 
-function profile() {
-
+function Profile() {
+  // get user from user context
+  const { user } = useContext(UserContext);
+  //data used to display profile info
   const [data, setData] = useState<UserProfile | null>(null);
 
-  async function fetchUserProfile() {
-    try {
-      const response = await getUserProfile();        // API call
-      if (!response.ok) throw new Error("Fetch failed");
-      const profileData = await response.json();
-      console.log("Profile data:", profileData.user);
-      setData(profileData.user);
-    } catch (err) {
-      console.error(err);
-      setData(null);
-    }
-  }
-
+  const navigate = useNavigate();
 
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    
+    if (user == null) {
+      navigate('/login'); // redirect to login if not authenticated
+    }
+    setData(user);
+    
+  }, [user]);
   
   return data === null ? 
   <div>
@@ -39,4 +35,4 @@ function profile() {
   </div>;
 }
 
-export default profile;
+export default Profile;

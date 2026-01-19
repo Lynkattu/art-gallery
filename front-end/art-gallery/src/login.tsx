@@ -1,11 +1,14 @@
 import './login.css';
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
+
+import { UserContext } from '../contexts/userContext.tsx';
 
 import Topbar from '../components/topbar/topbar';
-import { postUserLogin } from '../api/userAPI.ts';
 
 function Login() {
+  const { loginUser, user } = useContext(UserContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -23,16 +26,17 @@ function Login() {
   // handle form submission
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
-    // send formData to backend
-    const res = await postUserLogin(formData);
-    const data = await res.json();
-
-    if (res.ok) {
-      console.log("Login success", data);
-      navigate('/');
-    } else {
-      console.error("Login failed", data);
+    const loginUserRes = await loginUser(formData.email, formData.password); // login user using context
+    // if login failed, show error toast
+    if (!loginUserRes.isSucessful) {
+      toast.error(`Login failed: ${loginUserRes.message}`, {
+        position: 'bottom-center',
+        autoClose: 3000,
+      });
+      return;
     }
+
+    navigate('/'); // redirect to home page after login
   };
 
   return <div>
@@ -51,6 +55,7 @@ function Login() {
         </li>
       </ul>
     </form>
+    <ToastContainer />
   </div>;
 }
 export default Login;
