@@ -5,6 +5,7 @@ import Home from './home';
 import UserRegister from './userRegister';
 import Login from './login';
 import Profile from './profile';
+import PersonalArt from './PersonalArt';
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path="/register" element={<UserRegister />} />
         <Route path="/login" element={<Login />} />
         <Route path="profile" element={<Profile/>} />
+        <Route path="personal-art" element={<PersonalArt/>} />
       </Routes>
     </BrowserRouter>
     </UserAuthProvider>

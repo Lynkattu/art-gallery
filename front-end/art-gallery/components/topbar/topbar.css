@@ -10,6 +10,7 @@
     z-index: 1000;
     border-bottom: #000 2px solid;
     border-top: #000 2px solid;
+    height: 50px;
 }
 
 .topbar button {

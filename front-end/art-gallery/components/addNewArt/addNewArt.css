@@ -1,0 +1,7 @@
+.add-new-art-container {
+    padding: 20px;
+    border: 1px solid black;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    height: 100%;
+}

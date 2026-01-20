@@ -8,7 +8,7 @@ import { UserContext } from '../contexts/userContext.tsx';
 import Topbar from '../components/topbar/topbar';
 
 function Login() {
-  const { loginUser, user } = useContext(UserContext);
+  const { loginUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",

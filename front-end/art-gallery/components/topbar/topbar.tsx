@@ -12,9 +12,9 @@ function Topbar() {
     return user !== null ? (
         <div className='topbar'>
             <a className='topbar-logo' href="/"><img src="http://localhost:5000/site_images/ArtGalleryLogo.png" alt="Art Gallery Logo"/></a>
+            <button onClick={() => navigate('/personal-art')}>Personal Art</button>
             <button onClick={() => navigate('/profile')}>Profile</button>
             <button onClick={() => logoutUser()}>Logout</button>
-            <button onClick={() => navigate('/register')}>Register</button>
         </div>
     ) : (
         <div className='topbar'>

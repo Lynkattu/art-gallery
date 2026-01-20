@@ -1,0 +1,20 @@
+.personal-art-side-nav {
+    width: 250px;
+    border-right: 1px solid #444;
+    height: calc(100vh - 50px);
+    background-color: #050520;
+    margin: 0;
+    padding: 1rem;
+}
+
+.personal-art-side-nav button{
+    width: 100%;
+    border: none;
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    background-color: #011830;
+    padding: 1em;
+    margin-bottom: 5px;
+
+}
