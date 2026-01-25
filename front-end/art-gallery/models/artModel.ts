@@ -1,7 +1,8 @@
 export interface Art {
-  artFilePath: string;
-  artName: string;
-  artDescription: string;
+  file: File | null;
+  title: string;
+  description: string;
+  user_id: string;
 }
 
 export interface ArtsResponse {

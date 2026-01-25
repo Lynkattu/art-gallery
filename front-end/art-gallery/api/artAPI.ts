@@ -1,4 +1,4 @@
-  import type { ArtsResponse } from '../models/artModel.ts';
+  import type { Art, ArtsResponse } from '../models/artModel.ts';
   import type {ArtPath} from '../models/artPathModel.ts';
   
   // fetch all art info from the backend API
@@ -29,5 +29,43 @@
     }
   }
 
+  type PostArtResult =
+  | { success: true; data: any }
+  | { success: false; error: string };
 
-  export { fetchAllArt, fetchRandomArtPaths };
+  async function postNewArt(art: Art): Promise<PostArtResult> {
+    try {
+      console.log("Posting new art:", art);
+      if (!art.title || !art.description || !art.user_id || !art.file) {
+        return { success: false, error: "All fields are required" };
+      }
+
+      const formData = new FormData();
+      formData.append("title", art.title);
+      formData.append("description", art.description);
+      formData.append("user_id", art.user_id);
+      formData.append("uploaded_file", art.file);
+
+      const res: Response = await fetch("http://localhost:5000/arts", {
+        method: "POST",
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { success: false, error: data.toString() };
+      }
+
+      console.log("Art posted successfully:", data);
+      return { success: true, data };
+
+    } catch (error) {
+      console.error("Error posting new art:", error);
+      return { success: false, error: "Failed to post new art" };
+    }
+
+  }
+
+
+  export { fetchAllArt, fetchRandomArtPaths, postNewArt };

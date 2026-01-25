@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 app.use(cookieParser());
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use("/images", express.static("images")); // Serve static files from images directory
 app.use("/site_images", express.static("site_images")); // Serve static files from site_images directory
 // Enable CORS for requests from the front-end
@@ -19,7 +19,7 @@ app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
 }));
-app.use(express.json());
+app.use(express.json({ limit: "20mb" }));
 
 //-----------Multer for file upload and download---------------
 const storage = multer.diskStorage({
@@ -32,7 +32,25 @@ const storage = multer.diskStorage({
   }
 })
 
-const upload = multer({ storage: storage })
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error('Invalid file type');
+      error.code = 'INVALID_FILE_TYPE';
+      return cb(error, false);
+    }
+
+    cb(null, true);
+  }
+});
+
+//const upload = multer({ storage: storage })
 //-------------------------------------------------------------
 
 

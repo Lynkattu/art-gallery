@@ -1,4 +1,9 @@
 import pool from '../db/db.js'; // adjust path to your db.js location
+import { v4 as uuidv4 } from 'uuid';
+import { rootPath } from 'get-root-path';
+import fs from 'fs';
+
+
 
 export default function(app, upload) {
 
@@ -13,16 +18,16 @@ export default function(app, upload) {
             }
 
             const [rows] = await pool.query(
-                "SELECT artFilePath FROM arts ORDER BY RAND() LIMIT ?",
+                "SELECT filePath FROM arts ORDER BY RAND() LIMIT ?",
                 [count]
             );
 
             console.log("Rows fetched:", rows);
 
             const arts = rows.map((art) => ({
-                imageUrl: `http://localhost:5000/images/${art.artFilePath}`,
+                imageUrl: `http://localhost:5000/images/${art.filePath}`,
             }));
-
+            
             res.json({ arts });
 
         } catch (err) {
@@ -33,15 +38,23 @@ export default function(app, upload) {
 
     // Upload new art
     app.post("/arts", upload.single("uploaded_file"), async (req, res) => {
-        if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-
-        const { name, description } = req.body;
 
         try {
+            if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+            const { title, description, user_id } = req.body;
+            if (!title || !description || !user_id) {
+                await fs.unlink(path.join(rootPath, `images/${req.file.filename}`)); // delete the uploaded file
+                return res.status(400).json({ error: "Title, description, and user_id are required" });
+            }
+            // generate a UUID for the user ID
+            const id = uuidv4().replace(/-/g, '');
+
             await pool.query(
-            "INSERT INTO arts (artFilePath, artName, artDescription) VALUES (?, ?, ?)",
-            [req.file.filename, name, description]
+                "INSERT INTO arts (id, filePath, title, description, user_id) VALUES (UNHEX(?), ?, ?, ?, UNHEX(?))",
+                [id, req.file.filename, title, description, user_id]
             );
+
             res.status(201).json({ message: "Art uploaded successfully" });
         } catch (err) {
             console.error("DB error inserting art:", err);

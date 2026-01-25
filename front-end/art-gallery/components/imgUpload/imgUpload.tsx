@@ -1,8 +1,12 @@
 import './imgUpload.css';
-import { JSX, useEffect, useState } from 'react';
+import { type JSX, useState } from 'react';
 import { IoIosCloseCircle } from "react-icons/io";
 
-function ImgUpload() {
+type Props = {
+    setArtFormFilePath: ( path: File | null) => void;
+};
+
+function ImgUpload({ setArtFormFilePath }: Props) {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
 
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
@@ -31,6 +35,8 @@ function ImgUpload() {
     reader.onload = () => {
       setImgSrc(reader.result as string);
     };
+    setArtFormFilePath(file);
+
   };
 
   const uploadContent: JSX.Element = (

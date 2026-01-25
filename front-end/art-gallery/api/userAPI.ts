@@ -21,7 +21,7 @@ async function postUserLogin(formData: { email: string; password: string; }) {
     }
 }
 
-// check if user is authenticated
+// get authenticated user's profile
 async function getUserProfile () {
     try {
         const res = await fetch("http://localhost:5000/users/profile", {

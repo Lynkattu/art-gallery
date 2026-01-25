@@ -92,7 +92,7 @@ export default function(app) {
             const userIdBuffer = Buffer.from(id, "hex");
             // get id and password hash from db by email
             const [rows] = await pool.query(
-                "SELECT email, username, firstName, lastName FROM users WHERE id = ?",
+                "SELECT HEX(id) AS id, email, username, firstName, lastName FROM users WHERE id = ?",
                 [userIdBuffer]
             );
             // check if user exists
@@ -100,6 +100,7 @@ export default function(app) {
                 console.log("User not found with ID:", id);
                 return res.status(404).json({ error: "User not found" });
             }
+            console.log("User profile fetched:",  rows[0].id);
             res.json({ user: rows[0] });
         } catch (err) {
             console.error("DB error fetching profile:", err);
