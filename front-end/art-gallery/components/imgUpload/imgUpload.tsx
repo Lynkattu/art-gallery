@@ -1,13 +1,22 @@
 import './imgUpload.css';
-import { type JSX, useState } from 'react';
-import { IoIosCloseCircle } from "react-icons/io";
+import { type JSX, useEffect, useState } from 'react';
 
 type Props = {
     setArtFormFilePath: ( path: File | null) => void;
+    setReset: React.Dispatch<React.SetStateAction<boolean>>;
+    reset: boolean;
 };
 
-function ImgUpload({ setArtFormFilePath }: Props) {
+function ImgUpload({ setArtFormFilePath, setReset, reset }: Props) {
   const [imgSrc, setImgSrc] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (reset) {
+      setImgSrc(null);
+      setArtFormFilePath(null);
+      setReset(false);
+    }
+  }, [reset]);
 
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
@@ -48,12 +57,7 @@ function ImgUpload({ setArtFormFilePath }: Props) {
 
   const previewContent: JSX.Element = (
     <div className="img-preview">
-      <img src={imgSrc || ''} alt="" />
-      <div className="overlay">
-        <button className="close-btn" onClick={() => setImgSrc(null)}>
-          <div className='close-icon'><IoIosCloseCircle size={30} /></div>
-        </button>
-      </div> 
+      <img onClick={() => setImgSrc(null)} src={imgSrc || ''} alt="" />
     </div>
   );
 

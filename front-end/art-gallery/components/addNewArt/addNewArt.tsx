@@ -11,6 +11,7 @@ import { toast, ToastContainer } from 'react-toastify/unstyled';
 
 function AddNewArt() {
   const { user } = useContext(UserContext);
+  const [resetImg, setResetImg] = useState(false);
 
   const [formData, setFormData] = useState<Art>({
     title: "",
@@ -34,7 +35,6 @@ function AddNewArt() {
     });
   }
   
-
   // handle form submission
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
@@ -42,13 +42,21 @@ function AddNewArt() {
     console.log(artPost);
     // if login failed, show error toast
     if (artPost.success == false) {
-      
       toast.error(`Art post failed: ${artPost.error}`, {
         position: 'bottom-center',
         autoClose: 3000,
       });
       return;
     }
+    setResetImg(true)
+    // reset form
+    setFormData({
+      ...formData,
+      title: "",
+      description: "",
+      user_id: user ? user.id : "",
+    });
+    // show success toast
     toast.success("Art posted successfully!", {
       position: 'bottom-center',
       autoClose: 3000,
@@ -68,13 +76,16 @@ function AddNewArt() {
   }, []);
 
   return <div className='add-new-art-container'>
-      <h3>Post New Art</h3>
-      <ImgUpload setArtFormFilePath={handleArtPath} />
-      <form className='art-details-form'>
-          <input onChange={handleChange} type="text" name="title" placeholder='Title' required />
-          <textarea onChange={handleChange} name="description" placeholder='Description' required></textarea>
-          <button type="submit" onClick={handleSubmit}>Add Art</button>
-      </form>
+      
+      <div className='add-art-content'>
+        <div className='art-upload'><ImgUpload setArtFormFilePath={handleArtPath} setReset={setResetImg} reset={resetImg} /></div>
+        <form className='art-form'>
+            <h3>Post New Art</h3>
+            <input onChange={handleChange} maxLength={64} value={formData.title} type="text" name="title" placeholder='Title' required />
+            <textarea onChange={handleChange} maxLength={255} value={formData.description} name="description" placeholder='Description' required></textarea>
+            <button type="submit" onClick={handleSubmit}>Add Art</button>
+        </form>
+      </div>
       <ToastContainer />
   </div>;
 }

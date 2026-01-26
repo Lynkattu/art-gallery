@@ -11,6 +11,7 @@
     border-bottom: #000 2px solid;
     border-top: #000 2px solid;
     height: 50px;
+    align-items: center;
 }
 
 .topbar button {
@@ -27,13 +28,12 @@
     background-color: #023e8a;
 }
 
-.topbar-logo {
-    height: 40px;
+.topbar .topbar-logo {
+    height: 100%;
     margin-right: auto;
 }
 
 .topbar-logo img {
     height: 100%;
-        border-radius: 50px;
-
+    border-radius: 40px;
 }

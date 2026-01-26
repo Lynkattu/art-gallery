@@ -18,9 +18,10 @@
     object-fit: cover;
     border-radius: 10px;
     box-shadow: 5px 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
 }
 
 .random-image ul li > img:hover {
     transform: scale(1.05);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease-in-out;
 }
