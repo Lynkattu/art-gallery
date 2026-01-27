@@ -8,6 +8,7 @@ import Topbar from '../components/topbar/topbar.tsx';
 import PersonalArtSideNav from '../components/personalArtSideNav/personalArtSideNav.tsx';
 import AddNewArt from '../components/addNewArt/addNewArt.tsx';
 import ViewCollection from '../components/viewCollection/viewCollection.tsx';
+import MyArt from '../components/myArt/myArt.tsx'
 
 function PersonalArt() {
     const { user } = useContext(UserContext);
@@ -31,6 +32,7 @@ function PersonalArt() {
       <div className="personal-art-page-content">
         {selected == 'view-collection' ? <ViewCollection /> : ""}
         {selected == 'add-new-art' ? <AddNewArt /> : ""}
+        {selected == 'my-art' ? <MyArt user={user}/> : ""}
       </div>
 
     </div>

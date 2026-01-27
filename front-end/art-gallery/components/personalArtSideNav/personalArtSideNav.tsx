@@ -9,6 +9,7 @@ function PersonalArtSideNav({ setSelected }: viewOptionProps) {
     <div className="personal-art-side-nav">
 
       <button onClick={() => setSelected('add-new-art')}>Add New Art</button>
+      <button onClick={() => setSelected('my-art')}>My Art</button>
       <button onClick={() => setSelected('view-collection')}>View Collection</button>
     </div>
   );

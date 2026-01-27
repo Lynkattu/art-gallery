@@ -68,4 +68,46 @@ export default function(app, upload) {
         res.download(`images/${req.params.filename}`);
     }); 
 
+    // modify existing art
+    app.put('/arts/:id', async (req, res) => {
+        if (req.params.id.length != 16) res.status(404).json({error: "Requested file not found"});
+        try {
+            const {title, description} = req.body;
+            await pool.query(
+                "UPDATE arts SET (title, description) WHERE id VALUES (?, ?, UNHEX(?))",
+                [title, description, req.params.id]
+            );
+
+            res.status(200).json({message: "File updated succesfully"})
+
+        } catch (err) {
+            res.status(500).json({error: err})
+        }
+    });
+
+    // get arts posted by user
+    app.get('/arts/artist/:id', async (req, res) => {
+        console.log(`try to fetch art from user: ${req.params.id}`)
+        try {
+            const [rows] = await pool.query(
+                'SELECT id, title, description, filePath FROM arts WHERE user_id = UNHEX(?)',
+                [req.params.id]
+            );
+
+            const arts = rows.map((art) => ({
+                id: art.id,
+                title: art.title,
+                description: art.description,
+                imageUrl: `http://localhost:5000/images/${art.filePath}`
+            }));
+            
+            console.log(`user: ${req.params.id} arts fetched successfully.`)
+            res.status(200).json({arts});
+
+        } catch (err) {
+            console.log(`user: ${req.params.id} arts fetch failed.`)
+            res.status(500).json({error: err});
+        }
+    });
 }
+

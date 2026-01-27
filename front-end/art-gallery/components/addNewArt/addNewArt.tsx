@@ -8,7 +8,6 @@ import { postNewArt } from '../../api/artAPI.ts';
 import { toast, ToastContainer } from 'react-toastify/unstyled';
 
 
-
 function AddNewArt() {
   const { user } = useContext(UserContext);
   const [resetImg, setResetImg] = useState(false);

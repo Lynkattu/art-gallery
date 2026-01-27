@@ -1,10 +1,12 @@
   import type { Art, ArtsResponse } from '../models/artModel.ts';
   import type {ArtPath} from '../models/artPathModel.ts';
   
+  const serverURL = "http://localhost:5000/";
+
   // fetch all art info from the backend API
   async function fetchAllArt(): Promise<void> {
     try {
-    const res: Response = await fetch("http://localhost:5000/arts");
+    const res: Response = await fetch(`${serverURL}art`);
     const data: ArtsResponse = await res.json();
 
     if (!res.ok) {
@@ -20,12 +22,30 @@
   //fetch random amount of art paths for homepage display (e.g., 10)
   async function fetchRandomArtPaths(count: number): Promise<string[]> {
     try {
-      const res: Response = await fetch(`http://localhost:5000/arts/random/${count}`);
+      const res: Response = await fetch(`${serverURL}arts/random/${count}`);
       const data = await res.json();
       return data.arts.map((art: ArtPath) => art.imageUrl);
     } catch (error) {
       console.error("Error fetching random art paths:", error);
       return [];
+    }
+  }
+
+  // fetch all arts from user
+  async function fetchArtByUser(userId: string): Promise<ArtPath[] | null> {
+    try {
+      const res: Response = await fetch(`${serverURL}arts/artist/${userId}`);
+      const data = await res.json();
+      return data.arts.map((art: ArtPath) => ({
+        id: art.id, 
+        title: art.title, 
+        decription: art.description, 
+        imageUrl: art.imageUrl
+      }));
+
+    } catch (error) {
+      console.error("Error fetchin art from user:", error);
+      return null;
     }
   }
 
@@ -68,4 +88,4 @@
   }
 
 
-  export { fetchAllArt, fetchRandomArtPaths, postNewArt };
+  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser };
