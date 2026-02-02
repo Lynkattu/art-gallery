@@ -13,6 +13,7 @@ function AddNewArt() {
   const [resetImg, setResetImg] = useState(false);
 
   const [formData, setFormData] = useState<Art>({
+    id: null,
     title: "",
     description: "",
     user_id: user ? user.id : "",
@@ -38,7 +39,6 @@ function AddNewArt() {
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
     const artPost = await postNewArt(formData); // login user using context
-    console.log(artPost);
     // if login failed, show error toast
     if (artPost.success == false) {
       toast.error(`Art post failed: ${artPost.error}`, {

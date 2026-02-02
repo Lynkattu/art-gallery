@@ -1,4 +1,5 @@
 export interface Art {
+  id: string | null
   file: File | null;
   title: string;
   description: string;

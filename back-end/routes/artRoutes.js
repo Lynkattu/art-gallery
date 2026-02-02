@@ -68,19 +68,28 @@ export default function(app, upload) {
         res.download(`images/${req.params.filename}`);
     }); 
 
-    // modify existing art
+    // update existing art
     app.put('/arts/:id', async (req, res) => {
-        if (req.params.id.length != 16) res.status(404).json({error: "Requested file not found"});
+        console.log("trying to update art: ", req.params.id)
         try {
             const {title, description} = req.body;
-            await pool.query(
-                "UPDATE arts SET (title, description) WHERE id VALUES (?, ?, UNHEX(?))",
-                [title, description, req.params.id]
+            const result = await pool.query(
+            `
+            UPDATE arts
+            SET title = ?, description = ?
+            WHERE id = UNHEX(?)
+                AND NOT (
+                title <=> ?
+                AND description <=> ?
+                )
+            `,
+            [title, description, req.params.id, title, description]
             );
-
-            res.status(200).json({message: "File updated succesfully"})
+            console.log(result)
+            res.status(200).json({message: "Art updated succesfully"})
 
         } catch (err) {
+            console.error("Art failed to update:", req.params.id)
             res.status(500).json({error: err})
         }
     });
@@ -90,7 +99,7 @@ export default function(app, upload) {
         console.log(`try to fetch art from user: ${req.params.id}`)
         try {
             const [rows] = await pool.query(
-                'SELECT id, title, description, filePath FROM arts WHERE user_id = UNHEX(?)',
+                'SELECT HEX(id) AS id, title, description, filePath FROM arts WHERE user_id = UNHEX(?)',
                 [req.params.id]
             );
 

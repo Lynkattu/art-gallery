@@ -39,7 +39,7 @@
       return data.arts.map((art: ArtPath) => ({
         id: art.id, 
         title: art.title, 
-        decription: art.description, 
+        description: art.description, 
         imageUrl: art.imageUrl
       }));
 
@@ -49,6 +49,7 @@
     }
   }
 
+  // post new art
   type PostArtResult =
   | { success: true; data: any }
   | { success: false; error: string };
@@ -84,8 +85,33 @@
       console.error("Error posting new art:", error);
       return { success: false, error: "Failed to post new art" };
     }
+  }
 
+  // update art
+  async function updateArt (art: Art): Promise<PostArtResult> {
+    console.log("updating art: ",art.id)
+    try {
+      const res: Response = await fetch(`${serverURL}arts/${art.id}`, {
+        method: 'PUT',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: art.title,
+          description: art.description
+        })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) return {success: false, error: `Failed to update art`}
+
+      return {success: true, data}
+
+    } catch (error) {
+      console.error("Failed to update art:", art.id)
+      return { success: false, error: "Failed to update art" };
+    }
   }
 
 
-  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser };
+  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt };

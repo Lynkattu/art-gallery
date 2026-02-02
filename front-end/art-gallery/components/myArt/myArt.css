@@ -6,11 +6,12 @@
     background-color: rgba(0,0,0,0.3);
     width: 100%;
     height: 100%;
-
 }
 
 .my-art .my-art-collection {
     flex: 1;
+    overflow: auto;
+    scrollbar-width: none;
 }
 
 .my-art .my-art-collection ul {
@@ -48,7 +49,7 @@
 
 .my-art .modify-art {
     flex: 1;
-
+    padding: 1rem;
 }
 
 .my-art .modify-art form {
@@ -57,12 +58,20 @@
     gap: 12px;
 }
 
+.my-art .modify-art form img {
+    width: 33%;
+    max-width: 100%;
+}
+
 .my-art .modify-art form input {
+    padding: 0.5em;
     width: 100%;
 }
 
 .my-art .modify-art form textarea {
+    padding: 0.5em;
     width: 100%;
+    height: 80px;
 }
 
 .my-art .modify-art .form-buttons {
