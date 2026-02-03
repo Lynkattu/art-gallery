@@ -1,3 +1,4 @@
+import './home.css'
 import { useState } from "react";
 
 import Topbar from "../components/topbar/topbar";
@@ -8,10 +9,10 @@ import { ToastContainer } from "react-toastify/unstyled";
 
 function Home() {
   const [selectedValue, setSelectedValue] = useState<string>("");
-  const [imageCount] = useState<number>(2);
+  const [imageCount] = useState<number>(10);
 
   return (
-      <div>
+      <div className="home">
       <Topbar />
         <h1>Art Gallery</h1>
         <Radiobutton
@@ -19,9 +20,11 @@ function Home() {
           items={[{title: "Art"}, {title: "Artist"}, {title: "Category"}]} 
         />
         <SearchBar/>
-        <RandomImages 
-          imageCount={imageCount}
-        />
+        <div className="random-arts">
+          <RandomImages 
+            imageCount={imageCount}
+          />
+        </div>
         <ToastContainer />
 
       </div>

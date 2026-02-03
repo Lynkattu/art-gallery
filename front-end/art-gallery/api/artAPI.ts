@@ -67,8 +67,9 @@
       formData.append("user_id", art.user_id);
       formData.append("uploaded_file", art.file);
 
-      const res: Response = await fetch("http://localhost:5000/arts", {
+      const res: Response = await fetch(`${serverURL}arts`, {
         method: "POST",
+        credentials: "include",
         body: formData
       });
 
@@ -93,6 +94,7 @@
     try {
       const res: Response = await fetch(`${serverURL}arts/${art.id}`, {
         method: 'PUT',
+        credentials: "include",
         headers: {
           "Content-Type": "application/json"
         },
@@ -113,5 +115,25 @@
     }
   }
 
+  async function deleteArt (id: string): Promise<PostArtResult> {
+    try {
+      const res: Response = await fetch(`${serverURL}arts/${id}`, {
+        method: 'DELETE',
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      });      
 
-  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt };
+      if(!res.ok) return {success: false, error: `Failed to delete art: status ${res.status}`}
+      const data = await res.json()
+
+      return {success: true, data}
+
+    } catch (error) {
+      return {success: false, error: "failed to delete art"}
+    }
+  }
+
+
+  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt };

@@ -1,7 +1,9 @@
 import pool from '../db/db.js'; // adjust path to your db.js location
 import { v4 as uuidv4 } from 'uuid';
 import { rootPath } from 'get-root-path';
-import fs from 'fs';
+import fs from 'fs/promises';
+import authentication from '../middleware/authentication.js';
+import path from 'path';
 
 
 
@@ -37,8 +39,7 @@ export default function(app, upload) {
     });
 
     // Upload new art
-    app.post("/arts", upload.single("uploaded_file"), async (req, res) => {
-
+    app.post("/arts", upload.single("uploaded_file"), authentication, async (req, res) => {
         try {
             if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
@@ -69,11 +70,11 @@ export default function(app, upload) {
     }); 
 
     // update existing art
-    app.put('/arts/:id', async (req, res) => {
+    app.put('/arts/:id', authentication, async (req, res) => {
         console.log("trying to update art: ", req.params.id)
         try {
             const {title, description} = req.body;
-            const result = await pool.query(
+            const [result] = await pool.query(
             `
             UPDATE arts
             SET title = ?, description = ?
@@ -85,6 +86,10 @@ export default function(app, upload) {
             `,
             [title, description, req.params.id, title, description]
             );
+            // No matches
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ message: "Art not found" });
+            }
             console.log(result)
             res.status(200).json({message: "Art updated succesfully"})
 
@@ -94,7 +99,72 @@ export default function(app, upload) {
         }
     });
 
-    // get arts posted by user
+    async function safeUnlink(filePath) {
+    try {
+        await fs.unlink(filePath);
+        console.log("Deleted file:", filePath);
+    } catch (err) {
+        if (err.code === "ENOENT") {
+            // File already gone — not a problem
+            console.warn("File not found, skipping:", filePath);
+        } else if (err.code === "EPERM" || err.code === "EISDIR") {
+            // Permission issue or path is a directory
+            console.error("Cannot delete file:", filePath, err.message);
+        } else {
+            // Unexpected error — rethrow
+            throw err;
+        }
+    }
+}
+
+app.delete('/arts/:id', authentication, async (req, res) => {
+    const artId = req.params.id;
+    console.log("Deleting art:", artId);
+
+    try {
+        // SELECT file path
+        const [rows] = await pool.query(
+            `SELECT filePath FROM arts WHERE id = UNHEX(?)`,
+            [artId]
+        );
+
+        if (!rows || rows.length === 0) {
+            return res.status(404).json({ message: "Art not found" });
+        }
+
+        const filePath = rows[0]?.filePath;
+
+        // DELETE file safely
+        if (filePath) {
+            const fullPath = path.join(rootPath, "images", path.basename(filePath));
+            try {
+                await fs.unlink(fullPath);
+                console.log("Deleted file:", fullPath);
+            } catch (err) {
+                if (err.code !== "ENOENT") console.warn("File delete error:", err.message);
+            }
+        }
+
+        // DELETE from database
+        const [result] = await pool.query(
+            `DELETE FROM arts WHERE id = UNHEX(?)`,
+            [artId]
+        );
+
+        if (!result || result.affectedRows === 0) {
+            return res.status(404).json({ message: "Art not found" });
+        }
+
+        res.status(200).json({ message: "Art deleted successfully" });
+
+    } catch (err) {
+        console.error("DELETE ART ERROR:", err);
+        res.status(500).json({ message: "Failed to delete art" });
+    }
+});
+
+
+    // get arts by user
     app.get('/arts/artist/:id', async (req, res) => {
         console.log(`try to fetch art from user: ${req.params.id}`)
         try {
@@ -118,5 +188,5 @@ export default function(app, upload) {
             res.status(500).json({error: err});
         }
     });
-}
+} 
 

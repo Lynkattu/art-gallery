@@ -2,7 +2,7 @@ import './myArt.css';
 import { type JSX, useEffect, useState } from 'react';
 
 import type { UserProfile } from '../../models/userProfile';
-import {fetchArtByUser, updateArt} from '../../api/artAPI';
+import {deleteArt, fetchArtByUser, updateArt} from '../../api/artAPI';
 import type { ArtPath } from '../../models/artPathModel';
 import { useNavigate } from 'react-router-dom';
 import type { Art } from '../../models/artModel';
@@ -46,6 +46,26 @@ function MyArt({ user }: props) {
         [e.target.name]: e.target.value,
         });
     };
+
+    const handleDelete = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault(); // prevents page navigation
+        if (selectedArt != null && selectedArt.id != null) {
+            const deletedArt = await deleteArt(selectedArt?.id)
+            if (deletedArt.success == false) {
+                toast.error(deletedArt.error, {
+                    position: 'bottom-center',
+                    autoClose: 3000,
+                });
+                return;
+            }
+            toast.success("Art deleted successfully", {
+                position: 'bottom-center',
+                autoClose: 3000,
+            });
+            getUserArt();
+            setSelectedArt(null);
+        }
+    }
 
     const handleSubmitChange = async (e: { preventDefault: () => void; }) => {
         e.preventDefault(); // prevents page navigation
@@ -97,7 +117,7 @@ function MyArt({ user }: props) {
                 <textarea maxLength={255} name='description' value={formData.description} placeholder='Description' onChange={handleChange}></textarea>
                 <div className='form-buttons'>
                     <button onClick={handleSubmitChange}>Submit Change</button>
-                    <button>Delete</button>
+                    <button onClick={handleDelete}>Delete</button>
                 </div>
             </form>
         </div>
