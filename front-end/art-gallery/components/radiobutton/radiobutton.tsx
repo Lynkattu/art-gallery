@@ -9,13 +9,14 @@ interface Item {
 
 type Props = {
   items: Item[];
+  defaultItem?: string;
   onSelect: (value: string) => void;
 };
 
 function radiobutton (
-  { onSelect, items }: Props
+  { onSelect, items, defaultItem }: Props
 ) {
-  const [selected, setSelected] = useState<string>("");
+  const [selected, setSelected] = useState<string>(defaultItem || "");
 
   const handleClick = (value: string) => {
     onSelect(value);

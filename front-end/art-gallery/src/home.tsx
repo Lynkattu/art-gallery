@@ -10,16 +10,20 @@ import { ToastContainer } from "react-toastify/unstyled";
 function Home() {
   const [selectedValue, setSelectedValue] = useState<string>("");
   const [imageCount] = useState<number>(10);
+  const items = [{title: "Art"}, {title: "Artist"}, {title: "Category"}];
 
   return (
       <div className="home">
       <Topbar />
         <h1>Art Gallery</h1>
-        <Radiobutton
-          onSelect={setSelectedValue} 
-          items={[{title: "Art"}, {title: "Artist"}, {title: "Category"}]} 
-        />
-        <SearchBar/>
+        <div className='search'>
+          <SearchBar/>
+          <Radiobutton
+            onSelect={setSelectedValue} 
+            items={items} 
+            defaultItem={items[0].title}
+          />
+        </div>
         <div className="random-arts">
           <RandomImages 
             imageCount={imageCount}
