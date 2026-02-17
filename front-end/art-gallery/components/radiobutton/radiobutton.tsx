@@ -9,7 +9,7 @@ interface Item {
 
 type Props = {
   items: Item[];
-  defaultItem?: string;
+  defaultItem?: string | null;
   onSelect: (value: string) => void;
 };
 

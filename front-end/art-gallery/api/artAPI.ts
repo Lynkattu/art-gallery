@@ -19,6 +19,38 @@
   }
   }
 
+  //fetch arts by search 
+  async function fetchArtBySearch(search: string, type: string): Promise<ArtPath[]> {
+    console.log(`fetching art by search: ${serverURL}arts/?type=${encodeURIComponent(type)}&search=${encodeURIComponent(search)}`);
+    try {
+      const res: Response = await fetch(
+        `${serverURL}arts/?type=${encodeURIComponent(type)}&search=${encodeURIComponent(search)}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.toString());
+      }
+
+      return data.arts.map((art: ArtPath) => ({
+        id: art.id, 
+        title: art.title, 
+        description: art.description, 
+        imageUrl: art.imageUrl
+      }));
+
+    } catch (error) {
+      console.error("Error fetching arts by search:", error);
+      return [];
+    }
+  }
+
   //fetch random amount of art paths for homepage display (e.g., 10)
   async function fetchRandomArtPaths(count: number): Promise<string[]> {
     try {
@@ -115,6 +147,7 @@
     }
   }
 
+  // delete art
   async function deleteArt (id: string): Promise<PostArtResult> {
     try {
       const res: Response = await fetch(`${serverURL}arts/${id}`, {
@@ -136,4 +169,4 @@
   }
 
 
-  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt };
+  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch };

@@ -14,11 +14,11 @@ function App() {
     <UserAuthProvider>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/arts" element={<Home />} />
         <Route path="/register" element={<UserRegister />} />
         <Route path="/login" element={<Login />} />
-        <Route path="profile" element={<Profile/>} />
-        <Route path="personal-art" element={<PersonalArt/>} />
+        <Route path="/profile" element={<Profile/>} />
+        <Route path="/personal-art" element={<PersonalArt/>} />
       </Routes>
     </BrowserRouter>
     </UserAuthProvider>

@@ -38,6 +38,48 @@ export default function(app, upload) {
         }
     });
 
+    // Search for art by title or artist
+    app.get("/arts", async (req, res) => {
+        try {
+            const { type, search } = req.query;
+            if (!type || !search) { 
+                return res.status(400).json({ message: "Both type and search parameters are required" });
+            }
+            let query;
+            if (type === "Art") {
+                [query] = await pool.query(
+                    `SELECT * FROM arts WHERE INSTR(title, ?)`,
+                    [search]
+                );
+            } else if (type === "Artist") {
+                [query] = await pool.query(
+                    `SELECT a.*, u.username
+                    FROM arts a
+                    JOIN users u ON a.user_id = u.id
+                    WHERE INSTR(u.username, ?)`,
+                    [search]
+                );
+            } else {
+                return res.status(400).json({ message: "Invalid search type" });
+            }
+
+            if (!query || query.length === 0) {
+                return res.status(404).json({ message: "No art found with the given title or artist" });
+            }
+
+            const arts = query.map((art) => ({
+                id: art.id,
+                title: art.title,
+                description: art.description,
+                imageUrl: `http://localhost:5000/images/${art.filePath}`
+            }));
+            res.status(200).json({arts});
+        } catch (err) {
+            console.error("Error during search:", err);
+            res.status(500).json({ message: "error occurred during search" });
+        }
+    });
+
     // Upload new art
     app.post("/arts", upload.single("uploaded_file"), authentication, async (req, res) => {
         try {
@@ -99,69 +141,51 @@ export default function(app, upload) {
         }
     });
 
-    async function safeUnlink(filePath) {
-    try {
-        await fs.unlink(filePath);
-        console.log("Deleted file:", filePath);
-    } catch (err) {
-        if (err.code === "ENOENT") {
-            // File already gone — not a problem
-            console.warn("File not found, skipping:", filePath);
-        } else if (err.code === "EPERM" || err.code === "EISDIR") {
-            // Permission issue or path is a directory
-            console.error("Cannot delete file:", filePath, err.message);
-        } else {
-            // Unexpected error — rethrow
-            throw err;
-        }
-    }
-}
+    app.delete('/arts/:id', authentication, async (req, res) => {
+        const artId = req.params.id;
+        console.log("Deleting art:", artId);
 
-app.delete('/arts/:id', authentication, async (req, res) => {
-    const artId = req.params.id;
-    console.log("Deleting art:", artId);
+        try {
+            // SELECT file path
+            const [rows] = await pool.query(
+                `SELECT filePath FROM arts WHERE id = UNHEX(?)`,
+                [artId]
+            );
 
-    try {
-        // SELECT file path
-        const [rows] = await pool.query(
-            `SELECT filePath FROM arts WHERE id = UNHEX(?)`,
-            [artId]
-        );
-
-        if (!rows || rows.length === 0) {
-            return res.status(404).json({ message: "Art not found" });
-        }
-
-        const filePath = rows[0]?.filePath;
-
-        // DELETE file safely
-        if (filePath) {
-            const fullPath = path.join(rootPath, "images", path.basename(filePath));
-            try {
-                await fs.unlink(fullPath);
-                console.log("Deleted file:", fullPath);
-            } catch (err) {
-                if (err.code !== "ENOENT") console.warn("File delete error:", err.message);
+            if (!rows || rows.length === 0) {
+                return res.status(404).json({ message: "Art not found" });
             }
+
+            const filePath = rows[0]?.filePath;
+
+            // DELETE file safely
+            if (filePath) {
+                const fullPath = path.join(rootPath, "images", path.basename(filePath));
+                try {
+                    await fs.unlink(fullPath);
+                    console.log("Deleted file:", fullPath);
+                } catch (err) {
+                    if (err.code !== "ENOENT") console.warn("File delete error:", err.message);
+                }
+            }
+
+            // DELETE from database
+            const [result] = await pool.query(
+                `DELETE FROM arts WHERE id = UNHEX(?)`,
+                [artId]
+            );
+
+            if (!result || result.affectedRows === 0) {
+                return res.status(404).json({ message: "Art not found" });
+            }
+
+            res.status(200).json({ message: "Art deleted successfully" });
+
+        } catch (err) {
+            console.error("DELETE ART ERROR:", err);
+            res.status(500).json({ message: "Failed to delete art" });
         }
-
-        // DELETE from database
-        const [result] = await pool.query(
-            `DELETE FROM arts WHERE id = UNHEX(?)`,
-            [artId]
-        );
-
-        if (!result || result.affectedRows === 0) {
-            return res.status(404).json({ message: "Art not found" });
-        }
-
-        res.status(200).json({ message: "Art deleted successfully" });
-
-    } catch (err) {
-        console.error("DELETE ART ERROR:", err);
-        res.status(500).json({ message: "Failed to delete art" });
-    }
-});
+    });
 
 
     // get arts by user
@@ -188,5 +212,4 @@ app.delete('/arts/:id', authentication, async (req, res) => {
             res.status(500).json({error: err});
         }
     });
-} 
-
+}
