@@ -48,7 +48,10 @@ export default function(app, upload) {
             let query;
             if (type === "Art") {
                 [query] = await pool.query(
-                    `SELECT * FROM arts WHERE INSTR(title, ?)`,
+                    `SELECT a.*, u.username
+                    FROM arts a
+                    JOIN users u ON a.user_id = u.id
+                    WHERE INSTR(a.title, ?)`,
                     [search]
                 );
             } else if (type === "Artist") {
@@ -71,6 +74,8 @@ export default function(app, upload) {
                 id: art.id,
                 title: art.title,
                 description: art.description,
+                artist: art.username,
+                createdAt: art.created_at,
                 imageUrl: `http://localhost:5000/images/${art.filePath}`
             }));
             res.status(200).json({arts});

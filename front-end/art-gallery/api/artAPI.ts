@@ -42,6 +42,8 @@
         id: art.id, 
         title: art.title, 
         description: art.description, 
+        artist: art.artist,
+        createdAt: art.createdAt,
         imageUrl: art.imageUrl
       }));
 
