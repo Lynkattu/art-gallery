@@ -33,6 +33,7 @@
 .searched-art ul li:hover {
     transform: scale(1.05);
     transition: all 0.3s ease-in-out;
+    cursor: pointer;
 }
 
 .searched-art ul li > p {
@@ -51,7 +52,5 @@
     border-radius: 6px;
 }
 
-.searched-art ul li p:hover {
-    cursor: default;
-}
+
 

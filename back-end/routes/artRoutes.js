@@ -38,6 +38,43 @@ export default function(app, upload) {
         }
     });
 
+    //get art by id
+    app.get("/arts/:id", async (req, res) => {
+        try {
+            const artId = req.params.id;
+            console.log("Fetching art with ID:", artId);
+
+            const [rows] = await pool.query(
+                `SELECT a.*, u.username
+                FROM arts a
+                JOIN users u ON a.user_id = u.id
+                WHERE a.id = UNHEX(?)`,
+                [artId]
+            );
+
+            if (!rows || rows.length === 0) {
+                return res.status(404).json({ message: "Art not found" });
+            }
+
+            const art = rows[0];
+            const artData = {
+                id: artId,
+                title: art.title,
+                description: art.description,
+                artist: art.username,
+                createdAt: art.created_at,
+                imageUrl: `http://localhost:5000/images/${art.filePath}`
+            };
+
+            console.log("Art fetched successfully:", artData);
+            res.status(200).json({ art: artData });
+
+        } catch (err) {
+            console.error("Error fetching art by ID:", err);
+            res.status(500).json({ message: "Failed to fetch art" });
+        }
+    });
+
     // Search for art by title or artist
     app.get("/arts", async (req, res) => {
         try {

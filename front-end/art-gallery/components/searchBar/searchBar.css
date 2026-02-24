@@ -13,6 +13,13 @@
     border: none;
 }
 
+.search-bar input:focus {
+    outline-style: solid;
+    outline-width: 2px;
+    outline-color: #ffffff;
+    outline-offset: -2px;
+}
+
 .search-bar button {
     margin: auto;
     height: 2.5rem;

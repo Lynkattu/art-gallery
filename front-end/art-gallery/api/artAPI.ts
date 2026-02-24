@@ -53,6 +53,31 @@
     }
   }
 
+  //fetch art by id
+  async function fetchArtById(id: string): Promise<ArtPath | null> {
+    try {
+      const res: Response = await fetch(`${serverURL}arts/${id}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.toString());
+      }
+
+      return {
+        id: data.art.id, 
+        title: data.art.title, 
+        description: data.art.description, 
+        artist: data.art.artist,
+        createdAt: data.art.createdAt,
+        imageUrl: data.art.imageUrl
+      };
+
+    } catch (error) {
+      console.error("Error fetching art by id:", error);
+      return null;
+    }
+  }
+
   //fetch random amount of art paths for homepage display (e.g., 10)
   async function fetchRandomArtPaths(count: number): Promise<string[]> {
     try {
@@ -171,4 +196,4 @@
   }
 
 
-  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch };
+  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById };

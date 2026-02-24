@@ -20,7 +20,7 @@ function searchBar(props: Props) {
   }
 
   return <div className="search-bar">
-    <input type="text" placeholder="Search artworks..." value={searchTxt} onChange={(e) => setSearchTxt(e.target.value)} />
+    <input type="text" onKeyDown={(e) => (e.key === "Enter" ? handleSearch() : null)} placeholder="Search artworks..." value={searchTxt} onChange={(e) => setSearchTxt(e.target.value)} />
     <button type="submit" onClick={handleSearch}><IoMdSearch size={24}/></button>
   </div>;
 }
