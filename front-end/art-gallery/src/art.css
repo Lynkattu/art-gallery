@@ -1,0 +1,42 @@
+.art-page {
+    scrollbar-width: none;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 82px);
+    background-color: rgba(0, 0, 0, 0.5);
+    margin: 16px;
+    border-radius: 16px;
+    padding: 1rem;
+
+}
+
+.art {
+    display: flex;
+    flex-direction: row;
+}
+
+.art .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    width: 50%;
+}
+.art .content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+}
+
+.art .recommendations {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 16px;
+    width: 50%;
+}
