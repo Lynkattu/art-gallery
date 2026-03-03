@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './radiobutton.css';
 
 interface Item {
@@ -17,6 +17,13 @@ function radiobutton (
   { onSelect, items, defaultItem }: Props
 ) {
   const [selected, setSelected] = useState<string>(defaultItem || "");
+
+  useEffect(() => {
+    if (defaultItem) {
+      setSelected(defaultItem);
+      onSelect(defaultItem);
+    }
+  }, [defaultItem]);
 
   const handleClick = (value: string) => {
     onSelect(value);

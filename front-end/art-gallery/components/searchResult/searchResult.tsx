@@ -13,7 +13,9 @@ function SearchResult({ results }: Props) {
     return <div className='searched-art'>
         <ul>
             {results.map((result, index) => (
-                <li key={index} onClick={() => navigate(`/art/${result.id}`, { state: { art: result } })}>
+                <li key={index} onClick={() => {
+                    navigate(`/art/${result.id}`, { state: { art: result } });
+                }}>
                     <p>{result.title}</p>
                     <img src={result.imageUrl} alt={result.title!} />
                     <p>{`by ${result.artist}`}</p>

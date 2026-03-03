@@ -85,19 +85,19 @@ export default function(app, upload) {
             let query;
             if (type === "Art") {
                 [query] = await pool.query(
-                    `SELECT a.*, u.username
+                    `SELECT a.*, HEX(a.id) as id, u.username
                     FROM arts a
                     JOIN users u ON a.user_id = u.id
-                    WHERE INSTR(a.title, ?)`,
-                    [search]
+                    WHERE a.title LIKE ?`,
+                    [`%${search}%`]
                 );
             } else if (type === "Artist") {
                 [query] = await pool.query(
-                    `SELECT a.*, u.username
+                    `SELECT a.*, HEX(a.id) as id, u.username
                     FROM arts a
                     JOIN users u ON a.user_id = u.id
-                    WHERE INSTR(u.username, ?)`,
-                    [search]
+                    WHERE u.username LIKE ?`,
+                    [`%${search}%`]
                 );
             } else {
                 return res.status(400).json({ message: "Invalid search type" });

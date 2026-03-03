@@ -63,7 +63,7 @@
         throw new Error(data.toString());
       }
 
-      return {
+      const artData: ArtPath = {
         id: data.art.id, 
         title: data.art.title, 
         description: data.art.description, 
@@ -71,6 +71,8 @@
         createdAt: data.art.createdAt,
         imageUrl: data.art.imageUrl
       };
+
+      return artData;
 
     } catch (error) {
       console.error("Error fetching art by id:", error);
