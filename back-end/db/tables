@@ -21,3 +21,25 @@ arts (
         REFERENCES users(id)
         ON DELETE CASCADE
 );
+
+tags (
+    id BINARY(16) PRIMARY KEY,
+    name VARCHAR(64) NOT NULL UNIQUE
+);
+
+art_tags (
+    art_id BINARY(16) NOT NULL,
+    tag_id BINARY(16) NOT NULL,
+
+    PRIMARY KEY (art_id, tag_id),
+    CONSTRAINT fk_art_tags_art
+        FOREIGN KEY (art_id)
+        REFERENCES arts(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_art_tags_tag
+        FOREIGN KEY (tag_id)
+        REFERENCES tags(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);

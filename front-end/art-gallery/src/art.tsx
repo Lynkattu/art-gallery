@@ -65,8 +65,7 @@ function Art() {
                 <h5>Comments</h5>
             </div>
 
-        </div>          
-
+        </div>
     );
 
     return <div >

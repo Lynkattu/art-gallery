@@ -1,0 +1,35 @@
+.tagcard-collection {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tagcard-collection .tagcard {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 1rem;
+    font-size: 1rem;
+    height: 3rem;
+}
+
+.tagcard-collection .tagcard button {
+    margin: auto 0px;
+    background: blue;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 50%;
+    margin-left: 8px;
+    width: 0.8rem;
+    height: 0.8rem;
+}
+
+.tagcard-collection .tagcard button:hover {
+    color: white;
+}
+

@@ -4,6 +4,7 @@ export interface Art {
   title: string;
   description: string;
   user_id: string;
+  tags: string[];
 }
 
 export interface ArtsResponse {

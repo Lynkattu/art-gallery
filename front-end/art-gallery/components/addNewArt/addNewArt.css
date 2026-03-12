@@ -57,3 +57,22 @@
     border-radius: 5px;
     cursor: pointer;
 }
+
+.art-form .tags-input {
+    display: flex;
+    flex-direction: row;
+}
+.art-form .tags-input input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.art-form .tags-input button {
+    max-width: 100px;
+    padding: 8px;
+    border: none;
+    background-color: rgb(30, 80, 200);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}

@@ -6,11 +6,13 @@ import type { Art } from '../../models/artModel';
 import { UserContext } from '../../contexts/userContext.tsx';
 import { postNewArt } from '../../api/artAPI.ts';
 import { toast, ToastContainer } from 'react-toastify/unstyled';
+import TagcardCollection from '../tagcardCollection/tagcardCollection.tsx';
 
 
 function AddNewArt() {
   const { user } = useContext(UserContext);
   const [resetImg, setResetImg] = useState(false);
+  const [tags, setTags] = useState<string>("");
 
   const [formData, setFormData] = useState<Art>({
     id: null,
@@ -18,6 +20,7 @@ function AddNewArt() {
     description: "",
     user_id: user ? user.id : "",
     file: null,
+    tags: [],
   });
 
   // handle input changes for all fields
@@ -34,7 +37,20 @@ function AddNewArt() {
       file: artFile,
     });
   }
-  
+
+  const handleTagsSubmit = () => {
+    setTags("");
+    const newTags = tags.split(",").map(str =>
+    str
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9 ]/g, "") // keep only letters and numbers
+    );
+    const tagsData = [...new Set([...formData.tags, ...newTags])];
+
+    setFormData({...formData, tags: tagsData})
+  }
+
   // handle form submission
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
@@ -82,6 +98,11 @@ function AddNewArt() {
             <h3>Post New Art</h3>
             <input onChange={handleChange} maxLength={64} value={formData.title} type="text" name="title" placeholder='Title' required />
             <textarea onChange={handleChange} maxLength={255} value={formData.description} name="description" placeholder='Description' required></textarea>
+            <TagcardCollection setFormData={setFormData} tags={formData.tags} />
+            <div className='tags-input'>
+              <input onChange={(e) => setTags(e.target.value)} maxLength={64} value={tags} type="text" name="tags" placeholder='Tags (comma-separated)' />
+              <button type="button" onClick={handleTagsSubmit}>Add Tags</button>
+            </div>
             <button type="submit" onClick={handleSubmit}>Add Art</button>
         </form>
       </div>
