@@ -127,6 +127,7 @@
       formData.append("description", art.description);
       formData.append("user_id", art.user_id);
       formData.append("uploaded_file", art.file);
+      formData.append("tags", JSON.stringify(art.tags));
 
       const res: Response = await fetch(`${serverURL}arts`, {
         method: "POST",

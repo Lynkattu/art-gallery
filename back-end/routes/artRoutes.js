@@ -126,7 +126,7 @@ export default function(app, upload) {
     app.post("/arts", upload.single("uploaded_file"), authentication, async (req, res) => {
         try {
             if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-
+            // Validate required fields
             const { title, description, user_id } = req.body;
             if (!title || !description || !user_id) {
                 await fs.unlink(path.join(rootPath, `images/${req.file.filename}`)); // delete the uploaded file
@@ -139,6 +139,49 @@ export default function(app, upload) {
                 "INSERT INTO arts (id, filePath, title, description, user_id) VALUES (UNHEX(?), ?, ?, ?, UNHEX(?))",
                 [id, req.file.filename, title, description, user_id]
             );
+
+            // Handle tags
+            let tagsId = [];  // to store tag IDs for the art
+            let tagsToInsert = []; // to store new tags that need to be inserted
+
+            // Check existing tags if provided
+            if (req.body.tags) {
+                const tags = JSON.parse(req.body.tags);
+                const [rows] = await pool.query(
+                    "SELECT name FROM tags WHERE name IN (?)",
+                    [tags]
+                );
+                tagsId = rows.map(row => row.id);
+                const existing_tags = rows.map(row => row.name);
+                tagsToInsert = tags.filter(tag => !existing_tags.includes(tag));
+            }
+
+            // Insert tags if provided
+            if (tagsToInsert.length > 0) {
+                for (const tag of tagsToInsert) {
+                    const tagId = uuidv4().replace(/-/g, '');
+                    await pool.query(
+                        "INSERT INTO tags (id, name) VALUES (UNHEX(?), ?)",
+                        [tagId, tag]
+                    );
+                    tagsId.push(tagId);
+                }
+            }
+
+            // Insert into art_tags
+            if (tagsId.length > 0) {
+                const placeholders = tagsId
+                    .map(() => "(UNHEX(?), UNHEX(?))")
+                    .join(",");
+
+                const values = tagsId.flatMap(tagId => [id, tagId]);
+
+                await pool.query(
+                    `INSERT INTO art_tags (art_id, tag_id)
+                    VALUES ${placeholders}`,
+                    values
+                );
+            }
 
             res.status(201).json({ message: "Art uploaded successfully" });
         } catch (err) {
