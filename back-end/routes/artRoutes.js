@@ -148,7 +148,7 @@ export default function(app, upload) {
             if (req.body.tags) {
                 const tags = JSON.parse(req.body.tags);
                 const [rows] = await pool.query(
-                    "SELECT name FROM tags WHERE name IN (?)",
+                    "SELECT HEX(id) as id, name FROM tags WHERE name IN (?)",
                     [tags]
                 );
                 tagsId = rows.map(row => row.id);
@@ -157,6 +157,7 @@ export default function(app, upload) {
             }
 
             // Insert tags if provided
+            console.log("Tags to insert:", tagsToInsert);
             if (tagsToInsert.length > 0) {
                 for (const tag of tagsToInsert) {
                     const tagId = uuidv4().replace(/-/g, '');
@@ -169,6 +170,7 @@ export default function(app, upload) {
             }
 
             // Insert into art_tags
+            console.log("Tag IDs for art:", tagsId);
             if (tagsId.length > 0) {
                 const placeholders = tagsId
                     .map(() => "(UNHEX(?), UNHEX(?))")
@@ -199,8 +201,14 @@ export default function(app, upload) {
     // update existing art
     app.put('/arts/:id', authentication, async (req, res) => {
         console.log("trying to update art: ", req.params.id)
+        const conn = await pool.getConnection();
+
         try {
-            const {title, description} = req.body;
+            const {title, description, tags} = req.body;
+
+            await conn.beginTransaction();
+
+            // Update art details only if they have changed
             const [result] = await pool.query(
             `
             UPDATE arts
@@ -213,16 +221,40 @@ export default function(app, upload) {
             `,
             [title, description, req.params.id, title, description]
             );
-            // No matches
-            if (result.affectedRows === 0) {
-                return res.status(404).json({ message: "Art not found" });
+
+            // Handle tags
+            await conn.query(
+                `DELETE FROM art_tags WHERE art_id = UNHEX(?)`,
+                [req.params.id]
+            );
+
+            if (tags && tags.length > 0) {
+                await conn.query(
+                    `INSERT INTO tags (id, name)
+                    VALUES ${tags.map(() => `(UNHEX(REPLACE(UUID(), '-', '')), ?)`).join(',')}
+                    ON DUPLICATE KEY UPDATE name = name`,
+                    tags
+                );
+
+                await conn.query(
+                    `INSERT INTO art_tags (art_id, tag_id)
+                    SELECT UNHEX(?), id FROM tags WHERE name IN (${tags.map(() => '?').join(',')})`,
+                    [req.params.id, ...tags]
+                );
             }
-            console.log(result)
-            res.status(200).json({message: "Art updated succesfully"})
+
+            await conn.commit();
+
+            console.log("Art updated:", result);
+            res.status(200).json({ message: "Art updated successfully" });
 
         } catch (err) {
-            console.error("Art failed to update:", req.params.id)
-            res.status(500).json({error: err})
+            await conn.rollback();
+            console.error("Art failed to update:", req.params.id);
+            console.error("Error details:", err);
+            res.status(500).json({ error: "Failed to update art" });
+        } finally {
+            conn.release();
         }
     });
 
@@ -278,7 +310,17 @@ export default function(app, upload) {
         console.log(`try to fetch art from user: ${req.params.id}`)
         try {
             const [rows] = await pool.query(
-                'SELECT HEX(id) AS id, title, description, filePath FROM arts WHERE user_id = UNHEX(?)',
+                `SELECT 
+                    HEX(a.id) AS id, 
+                    a.title, 
+                    a.description, 
+                    a.filePath, 
+                    GROUP_CONCAT(t.name) AS tags
+                FROM arts a
+                LEFT JOIN art_tags at ON a.id = at.art_id
+                LEFT JOIN tags t ON at.tag_id = t.id
+                WHERE a.user_id = UNHEX(?)
+                GROUP BY a.id, a.title, a.description, a.filePath`,
                 [req.params.id]
             );
 
@@ -286,9 +328,10 @@ export default function(app, upload) {
                 id: art.id,
                 title: art.title,
                 description: art.description,
-                imageUrl: `http://localhost:5000/images/${art.filePath}`
+                imageUrl: `http://localhost:5000/images/${art.filePath}`,
+                tags: art.tags ? art.tags.split(',') : [] // split tags into an array
             }));
-            
+            console.log(`Fetched arts from user ${req.params.id}:`, arts);
             console.log(`user: ${req.params.id} arts fetched successfully.`)
             res.status(200).json({arts});
 

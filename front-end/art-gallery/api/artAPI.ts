@@ -69,7 +69,8 @@
         description: data.art.description, 
         artist: data.art.artist,
         createdAt: data.art.createdAt,
-        imageUrl: data.art.imageUrl
+        imageUrl: data.art.imageUrl,
+        tags: data.art.tags ? data.art.tags : []
       };
 
       return artData;
@@ -101,7 +102,8 @@
         id: art.id, 
         title: art.title, 
         description: art.description, 
-        imageUrl: art.imageUrl
+        imageUrl: art.imageUrl,
+        tags: art.tags
       }));
 
     } catch (error) {
@@ -162,7 +164,8 @@
         },
         body: JSON.stringify({
           title: art.title,
-          description: art.description
+          description: art.description,
+          tags: art.tags
         })
       });
       const data = await res.json();

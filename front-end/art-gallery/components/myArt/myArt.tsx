@@ -7,6 +7,8 @@ import type { ArtPath } from '../../models/artPathModel';
 import { useNavigate } from 'react-router-dom';
 import type { Art } from '../../models/artModel';
 import { toast, ToastContainer } from 'react-toastify';
+import TagcardCollection from '../tagcardCollection/TagcardCollection';
+import TagInput from '../tagInput/tagInput.tsx';
 
 
 type props = {
@@ -25,6 +27,7 @@ function MyArt({ user }: props) {
         description: "",
         user_id: user ? user.id : "",
         file: null,
+        tags: []
     });
 
     const handleSelection = (art: ArtPath) => {
@@ -34,6 +37,7 @@ function MyArt({ user }: props) {
             description: art.description ? art.description : "",
             user_id: user ? user.id : "",
             file: null,
+            tags: art.tags ? art.tags : []
         })
         console.log(formData);
         setSelectedArt(art);
@@ -69,11 +73,12 @@ function MyArt({ user }: props) {
 
     const handleSubmitChange = async (e: { preventDefault: () => void; }) => {
         e.preventDefault(); // prevents page navigation
-        if (formData.title == selectedArt?.title && formData.description == selectedArt.description) {
+        if (formData.title == selectedArt?.title && formData.description == selectedArt.description && selectedArt.tags == formData.tags) {
             toast.warning('Changes must be made in order to submit changes.', {
                 position: 'bottom-center',
                 autoClose: 3000,
             });
+            return;
         }
         const artUpdate = await updateArt(formData);
         if (artUpdate.success == false) {
@@ -104,7 +109,7 @@ function MyArt({ user }: props) {
     async function getUserArt() {
         if (user != null) {
             const arts = await fetchArtByUser(user.id);
-            console.log(arts)
+            console.log("Fetched art:", arts);
             setUserArts(arts)
         }
     }
@@ -115,6 +120,9 @@ function MyArt({ user }: props) {
                 <img src={selectedArt?.imageUrl} alt={"Selected image"} />
                 <input type="text" name='title' placeholder='Title' value={formData.title} onChange={handleChange} />
                 <textarea maxLength={255} name='description' value={formData.description} placeholder='Description' onChange={handleChange}></textarea>
+
+                <TagcardCollection tags={formData.tags ? formData.tags : []} setFormData={setFormData}/>
+                <TagInput setFormData={setFormData} formData={formData} />
                 <div className='form-buttons'>
                     <button onClick={handleSubmitChange}>Submit Change</button>
                     <button onClick={handleDelete}>Delete</button>

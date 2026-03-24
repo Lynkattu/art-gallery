@@ -1,0 +1,19 @@
+.tags-input {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: row;
+}
+.tags-input input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.tags-input button {
+    max-width: 100px;
+    padding: 8px;
+    border: none;
+    background-color: rgb(30, 80, 200);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
