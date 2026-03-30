@@ -85,18 +85,50 @@ export default function(app, upload) {
             let query;
             if (type === "Art") {
                 [query] = await pool.query(
-                    `SELECT a.*, HEX(a.id) as id, u.username
+                    `SELECT 
+                        a.title, 
+                        a.description, 
+                        a.filePath,
+                        a.created_at,
+                        HEX(a.id) AS id, 
+                        u.username,
+                        GROUP_CONCAT(t.name) AS tags
                     FROM arts a
                     JOIN users u ON a.user_id = u.id
-                    WHERE a.title LIKE ?`,
+                    LEFT JOIN art_tags at ON a.id = at.art_id
+                    LEFT JOIN tags t ON at.tag_id = t.id
+                    WHERE a.title LIKE ?
+                    GROUP BY 
+                        a.id, 
+                        a.title, 
+                        a.description, 
+                        a.filePath, 
+                        a.created_at, 
+                        u.username`,
                     [`%${search}%`]
                 );
             } else if (type === "Artist") {
                 [query] = await pool.query(
-                    `SELECT a.*, HEX(a.id) as id, u.username
+                    `SELECT 
+                        a.title, 
+                        a.description, 
+                        a.filePath,
+                        a.created_at,
+                        HEX(a.id) AS id, 
+                        u.username,
+                        GROUP_CONCAT(t.name) AS tags
                     FROM arts a
                     JOIN users u ON a.user_id = u.id
-                    WHERE u.username LIKE ?`,
+                    LEFT JOIN art_tags at ON a.id = at.art_id
+                    LEFT JOIN tags t ON at.tag_id = t.id
+                    WHERE u.username LIKE ?
+                    GROUP BY 
+                        a.id, 
+                        a.title, 
+                        a.description, 
+                        a.filePath, 
+                        a.created_at, 
+                        u.username`,
                     [`%${search}%`]
                 );
             } else {
@@ -113,6 +145,7 @@ export default function(app, upload) {
                 description: art.description,
                 artist: art.username,
                 createdAt: art.created_at,
+                tags: art.tags ? art.tags.split(',') : [],
                 imageUrl: `http://localhost:5000/images/${art.filePath}`
             }));
             res.status(200).json({arts});

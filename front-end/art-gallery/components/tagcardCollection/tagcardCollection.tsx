@@ -1,14 +1,15 @@
 import "./tagcardCollection.css";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { Art } from "../../models/artModel";
+import {type Art } from "../../models/artModel";
+import { useState } from "react";
 
 type Props = {
     tags: string[];
-    setFormData: React.Dispatch<React.SetStateAction<Art>>;
+    setFormData?: React.Dispatch<React.SetStateAction<Art>> | null;
 }
 
-function TagcardCollection({ tags, setFormData }: Props) {
+function TagcardCollection({ tags, setFormData = null }: Props) {
 
     function handleTags(index: number, setFormData: React.Dispatch<React.SetStateAction<Art>>) {
         setFormData(prevData => ({
@@ -20,11 +21,17 @@ function TagcardCollection({ tags, setFormData }: Props) {
     return (
         <div className="tagcard-collection">
             {tags.map((tag, index) => (
-                <div className="tagcard" key={index}>
+                <div className={"tagcard"} key={index}>
                     <p>{tag}</p>
-                    <IconButton onClick={() => handleTags(index, setFormData)} aria-label="delete" size="small">
+                    {
+                        setFormData ?
+                    <IconButton 
+                        onClick={() =>  handleTags(index, setFormData)} 
+                        aria-label="delete" size="small">
                         <CloseIcon className="close-icon" fontSize="small"/>
                     </IconButton>
+                    : null
+}
                 </div>
             ))}
         </div>

@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import Topbar from "../components/topbar/topbar";
 import { fetchArtById } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
+import ShowArtDetails from "../components/showArtDetails/showArtDetails";
 
 
 function Art() {
@@ -30,7 +31,8 @@ function Art() {
                 description: art.description,
                 artist: art.artist,
                 createdAt: art.createdAt,
-                imageUrl: art.imageUrl
+                imageUrl: art.imageUrl,
+                tags: art.tags,
             };
             setArtState(data);
         } else {
@@ -46,6 +48,7 @@ function Art() {
             <div className="content">
                 <h4>{artState?.title}</h4>
                 <img src={artState?.imageUrl} alt={artState?.title || ""} />
+                <ShowArtDetails art={artState ? artState : art} />
                 <p>{artState?.description}</p>
 
             </div>

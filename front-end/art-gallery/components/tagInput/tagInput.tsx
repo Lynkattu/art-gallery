@@ -1,6 +1,6 @@
 import "./tagInput.css";
 import { useState } from "react";
-import { Art } from "../../models/artModel";
+import {type Art } from "../../models/artModel";
 
 type Props = {
     setFormData: React.Dispatch<React.SetStateAction<Art>>;

@@ -1,0 +1,11 @@
+.show-art-details > button {
+    width: 160px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #011830;
+    color: white;
+    border-radius: 16px;
+    cursor: pointer;
+    margin: 1rem;
+}
+

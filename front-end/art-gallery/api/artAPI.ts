@@ -44,7 +44,8 @@
         description: art.description, 
         artist: art.artist,
         createdAt: art.createdAt,
-        imageUrl: art.imageUrl
+        imageUrl: art.imageUrl,
+        tags: art.tags ? art.tags : []
       }));
 
     } catch (error) {
