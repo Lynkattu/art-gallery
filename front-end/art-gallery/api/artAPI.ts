@@ -83,11 +83,22 @@
   }
 
   //fetch random amount of art paths for homepage display (e.g., 10)
-  async function fetchRandomArtPaths(count: number): Promise<string[]> {
+  async function fetchRandomArtPaths(count: number): Promise<ArtPath[]> {
     try {
       const res: Response = await fetch(`${serverURL}arts/random/${count}`);
       const data = await res.json();
-      return data.arts.map((art: ArtPath) => art.imageUrl);
+      if (!res.ok) {
+        throw new Error(data.toString());
+      }
+      return data.arts.map((art: ArtPath) => ({
+        id: art.id, 
+        title: art.title, 
+        description: art.description, 
+        imageUrl: art.imageUrl,
+        tags: art.tags,
+        createdAt: art.createdAt,
+        artist: art.artist
+      }));
     } catch (error) {
       console.error("Error fetching random art paths:", error);
       return [];

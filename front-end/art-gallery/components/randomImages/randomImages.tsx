@@ -1,14 +1,18 @@
 import './randomImages.css';
 import { useEffect, useState } from 'react';
 import { fetchRandomArtPaths } from '../../api/artAPI.ts';
+import type { ArtPath } from '../../models/artPathModel.ts';
+import { useNavigate } from "react-router-dom";
+
 
 type Props = {
     imageCount?: number;
 };
 
 function RandomImages({ imageCount }: Props) {
+    const navigate = useNavigate();
 
-    const [imagePaths, setImagePaths] = useState<string[]>([]);
+    const [imagePaths, setImagePaths] = useState<ArtPath[]>([]);
 
     useEffect(() => {
         console.log(imageCount);
@@ -22,11 +26,15 @@ function RandomImages({ imageCount }: Props) {
 
     }, []);
 
-    return <div className='random-image'>
+    return <div className='random-images'>
         <ul>
-            {imagePaths.map((path, index) => (
-                <li key={index}>
-                    <img src={path} alt={`Random Art ${index}`} />
+            {imagePaths.map((result, index) => (
+                <li key={index} onClick={() => {
+                    navigate(`/art/${result.id}`, { state: { art: result } });
+                }}>
+                    <p>{result.title}</p>
+                    <img src={result.imageUrl} alt={result.title!} />
+                    <p>{`by ${result.artist}`}</p>
                 </li>
             ))}
         </ul>

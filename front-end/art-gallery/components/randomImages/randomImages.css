@@ -1,10 +1,11 @@
-.random-image {
+.random-images {
     overflow: auto;
     scrollbar-width: none;
     flex: 1;
 }
 
-.random-image ul {
+.random-images ul {
+    position: relative;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -13,13 +14,15 @@
     padding: 0;
     margin: 0;
 }
-
-.random-image ul li {
+.random-images ul li {
+    position: relative;
+    transition: all 0.3s ease-in-out;
     margin: 10px;
     width: 18%;
 }
 
-.random-image ul li > img {
+.random-images ul li > img {
+    position: relative;
     width: 100%;
     object-fit: cover;
     border-radius: 10px;
@@ -27,7 +30,27 @@
     transition: all 0.3s ease-in-out;
 }
 
-.random-image ul li > img:hover {
+.random-images ul li:hover {
     transform: scale(1.05);
     transition: all 0.3s ease-in-out;
+    cursor: pointer;
 }
+
+.random-images ul li > p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.4rem;
+}
+
+.random-images ul li p:last-child {
+    position: absolute;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    bottom: 5px;
+    left: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+}
+
+
+
