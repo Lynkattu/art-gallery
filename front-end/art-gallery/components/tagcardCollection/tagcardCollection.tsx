@@ -2,7 +2,6 @@ import "./tagcardCollection.css";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import {type Art } from "../../models/artModel";
-import { useState } from "react";
 
 type Props = {
     tags: string[];

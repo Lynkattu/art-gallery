@@ -97,7 +97,10 @@ export default function(app, upload) {
                     JOIN users u ON a.user_id = u.id
                     LEFT JOIN art_tags at ON a.id = at.art_id
                     LEFT JOIN tags t ON at.tag_id = t.id
-                    WHERE a.title LIKE ?
+                    WHERE 
+                        a.title LIKE ?
+                        OR a.description LIKE ?
+                        OR t.name LIKE ?
                     GROUP BY 
                         a.id, 
                         a.title, 
@@ -105,7 +108,7 @@ export default function(app, upload) {
                         a.filePath, 
                         a.created_at, 
                         u.username`,
-                    [`%${search}%`]
+                    [`%${search}%`, `%${search}%`, `%${search}%`]
                 );
             } else if (type === "Artist") {
                 [query] = await pool.query(
