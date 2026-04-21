@@ -6,7 +6,55 @@ import authentication from '../middleware/authentication.js';
 
 export default function(app) {
 
+    /**
+     * @swagger
+     * tags:
+     *   name: Users
+     *   description: User management and authentication
+     */
+
     // User registration
+    /**
+     * @swagger
+     * /users/register:
+     *   post:
+     *     summary: Register a new user
+     *     tags: [Users]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               username:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's username
+     *               firstName:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's first name
+     *               lastName:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's last name
+     *               email:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's email address
+     *               password:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's password
+     *     responses:
+     *       201:
+     *         description: User registered successfully
+     *       400:
+     *         description: Bad request
+     *       500:
+     *         description: Internal server error
+     */
     app.post("/users/register", async (req, res) => {
         const { username, firstName, lastName, email, password } = req.body;
         // Validation
@@ -32,6 +80,35 @@ export default function(app) {
     });
 
     // User login
+    /**
+     * @swagger
+     * /users/login:
+     *   post:
+     *     summary: Login a user
+     *     tags: [Users]
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               email:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's email address
+     *               password:
+     *                 type: string
+     *                 required: true
+     *                 description: The user's password
+     *     responses:
+     *       200:
+     *         description: User logged in successfully
+     *       400:
+     *         description: Bad request
+     *       500:
+     *         description: Internal server error
+     */
     app.post("/users/login", async (req, res) => {
         const { email, password } = req.body;
         try {
@@ -74,12 +151,40 @@ export default function(app) {
     });
 
     // User logout
+    /**
+     * @swagger
+     * /users/logout:
+     *   post:
+     *     summary: Logout a user
+     *     tags: [Users]
+     *     responses:
+     *       200:
+     *         description: User logged out successfully
+     *       500:
+     *         description: Internal server error
+     */
     app.post("/users/logout", (req, res) => {
         res.clearCookie("token");
         res.json({ message: "Logged out" });
     });
 
     // Get user profile
+    /**
+     * @swagger
+     * /users/profile:
+     *   get:
+     *     summary: Get the logged-in user's profile
+     *     tags: [Users]
+     *     security:
+     *       - cookieAuth: []
+      *     responses:
+      *       200:
+      *         description: The user's profile information
+      *       400:
+      *         description: User not found
+      *       500:
+      *         description: Internal server error
+     */
     app.get("/users/profile", authentication, async (req, res) => {
         try {
             const { id } = req.user;

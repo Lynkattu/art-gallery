@@ -8,8 +8,35 @@ import path from 'path';
 
 
 export default function(app, upload) {
+    /** 
+     * @swagger
+     * tags:
+     *   name: Arts
+     *   description: API endpoints for managing art pieces
+    */
 
     // Get random art paths
+    /**
+     * @swagger
+     * /arts/random/{count}:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Get random art pieces
+     *     parameters:
+     *       - in: path
+     *         name: count
+     *         schema:
+     *           type: integer
+     *         required: true
+     *         description: Number of random art pieces to fetch
+     *     responses:
+     *        200:
+     *          description: A list of random art pieces
+     *        400:
+     *          description: Invalid count
+     *        500:
+     *          description: Internal server error
+     */
     app.get("/arts/random/:count", async (req, res) => {
         try {
             const count = parseInt(req.params.count, 10);
@@ -64,6 +91,27 @@ export default function(app, upload) {
     });
 
     //get art by id
+    /** 
+     * @swagger
+     * /arts/{id}:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Get art by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the art piece to fetch
+     *     responses:
+     *        200:
+     *          description: The art piece with the specified ID
+     *        404:
+     *          description: Art piece not found
+     *        500:
+     *          description: Internal server error
+     */
     app.get("/arts/:id", async (req, res) => {
         try {
             const artId = req.params.id;
@@ -101,6 +149,35 @@ export default function(app, upload) {
     });
 
     // Search for art by title or artist
+    /** 
+     * @swagger
+     * /arts:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Search for art by title & description & tags or by artist user name
+     *     parameters:
+     *       - in: query
+     *         name: type
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The type of search (Art or Artist)
+     *       - in: query
+     *         name: search
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The search term
+     *     responses:
+     *       200:
+     *         description: A list of art pieces matching the search criteria
+     *       400:
+     *         description: Invalid search parameters
+     *       404:
+     *         description: No art pieces found
+     *       500:
+     *         description: Internal server error
+     */
     app.get("/arts", async (req, res) => {
         try {
             const { type, search } = req.query;
@@ -184,6 +261,43 @@ export default function(app, upload) {
     });
 
     // Upload new art
+    /** 
+     * @swagger
+     * /arts:
+     *   post:
+     *     tags: [Arts]
+     *     summary: Upload a new art piece
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         multipart/form-data:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               title:
+     *                 type: string
+     *               description:
+     *                 type: string
+     *               user_id:
+     *                 type: string
+     *               tags:
+     *                 type: array
+     *                 items:
+     *                   type: string
+     *             required:
+     *               - title
+     *               - description
+     *               - user_id
+     *     security:
+     *      - bearerAuth: []
+     *     responses:
+     *       201:
+     *         description: Art piece uploaded successfully
+     *       400:
+     *         description: Bad request
+     *       500:
+     *         description: Internal server error
+     */
     app.post("/arts", upload.single("uploaded_file"), authentication, async (req, res) => {
         try {
             if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -260,6 +374,44 @@ export default function(app, upload) {
     }); 
 
     // update existing art
+    /** 
+     * @swagger
+     * /arts/{id}:
+     *   put:
+     *     tags: [Arts]
+     *     summary: Update an existing art piece
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the art piece to update
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               title:
+     *                 type: string
+     *               description:
+     *                 type: string
+     *               tags:
+     *                 type: array
+     *                 items:
+     *                   type: string
+     *     security:
+     *      - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Art piece updated successfully
+     *       400:
+     *         description: Bad request
+     *       500:
+     *         description: Internal server error
+     */
     app.put('/arts/:id', authentication, async (req, res) => {
         console.log("trying to update art: ", req.params.id)
         const conn = await pool.getConnection();
@@ -319,6 +471,30 @@ export default function(app, upload) {
         }
     });
 
+    //delete art by id
+    /** 
+     * @swagger
+     * /arts/{id}:
+     *   delete:
+     *     tags: [Arts]
+     *     summary: Delete an art piece by ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the art piece to delete
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Art piece deleted successfully
+     *       404:
+     *         description: Art piece not found
+     *       500:
+     *         description: Internal server error
+     */
     app.delete('/arts/:id', authentication, async (req, res) => {
         const artId = req.params.id;
         console.log("Deleting art:", artId);
@@ -367,6 +543,27 @@ export default function(app, upload) {
 
 
     // get arts by user
+    /** 
+     * @swagger
+     * /arts/artist/{id}:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Get arts by artist ID
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the artist
+     *     responses:
+     *       200:
+     *         description: A list of art pieces by the specified artist
+     *       404:
+     *         description: Artist not found
+     *       500:
+     *         description: Internal server error
+     */
     app.get('/arts/artist/:id', async (req, res) => {
         console.log(`try to fetch art from user: ${req.params.id}`)
         try {

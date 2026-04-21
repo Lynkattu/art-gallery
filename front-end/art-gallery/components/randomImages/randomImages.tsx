@@ -24,12 +24,12 @@ function RandomImages({ imageCount }: Props) {
 
         loadImages();
 
-    }, []);
+    }, [imageCount]);
 
     return <div className='random-images'>
         <ul>
-            {imagePaths.map((result, index) => (
-                <li key={index} onClick={() => {
+            {imagePaths.map((result) => (
+                <li key={result.id} onClick={() => {
                     navigate(`/art/${result.id}`, { state: { art: result } });
                 }}>
                     <p>{result.title}</p>

@@ -26,3 +26,8 @@ JWT_SECRET = your jwt secret (can be anything)
 <br>
 NODE_ENV=development
 6. Frontend starts like any react app with *npm run dev* command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder.
+
+## API Documentation (Swagger)
+API docementation is created by using swagger.
+1. first start back end
+2. next navigate to http://localhost:5000/api-docs

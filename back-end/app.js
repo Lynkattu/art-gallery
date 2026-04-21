@@ -5,12 +5,14 @@ import cors from 'cors';
 import artRoutes from './routes/artRoutes.js'; // note the .js extension
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
 dotenv.config();
 
 const app = express();
-app.use(cookieParser());
 
+app.use(cookieParser());
 app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use("/images", express.static("images")); // Serve static files from images directory
 app.use("/site_images", express.static("site_images")); // Serve static files from site_images directory
@@ -50,51 +52,42 @@ const upload = multer({
   }
 });
 
-//const upload = multer({ storage: storage })
-//-------------------------------------------------------------
+// swagger setup
+const options = {
+  definition: {
+    openapi: "3.1.0",
+    info: {
+      title: "Art Gallery",
+      version: "0.1.0",
+      description:
+        "CRUD API of an art gallery application",
+      license: {
+        name: "MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+    },
+    servers: [
+      {
+        url: "http://localhost:5000",
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
 
+const specs = swaggerJsdoc(options);
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { explorer: true })
 
-/* // get all arts data stored in db
-app.get("/arts", async(req, res) => {
-  try {
-      const data = await pool.query(
-        `SELECT * from arts;`
-      );
-      res.status(202).json({
-        arts: data[0],
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err,
-      });
-    }
-});
-
-// get art with specific artFilePath name
-app.get("/arts/:filename", async (req, res) => {
-  console.log(req.params);
-  try {
-    const data = await pool.query(
-      `SELECT * FROM arts WHERE artFilePath = '${req.params.filename}';`
-    );
-    res.status(202).json({
-      art: data[0],
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: err,
-    });
-  }
-});
-
-*/
+);
 
 // register routes
 artRoutes(app, upload);
 userRoutes(app);
 
 // start server
-
 app.listen(process.env.PORT, () => {
   console.log(`Server listening in http://${process.env.HOST}:${process.env.PORT}`);
 });
