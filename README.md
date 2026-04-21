@@ -1,5 +1,5 @@
 # Art Gallery
-Art gallery is under development, its not responsive and many features are not implemented yet.
+Art gallery is under development, its not responsive and many features are not implemented yet. Art gallery is web application. Anyone can search and view artworks made by any user. Logged users can post new arts. The User can also delete and update their own existing art. Anyone can create new account.
 
 ## Installation
 1. Download project from git.
