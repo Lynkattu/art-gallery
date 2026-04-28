@@ -43,3 +43,17 @@ art_tags (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+comments (
+    id BINARY(16) PRIMARY KEY,
+    comment VARCHAR(10000) NOT NULL,
+    art_id BINARY(16) NOT NULL,
+    user_id BINARY(16) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (art_id) REFERENCES arts(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+);
