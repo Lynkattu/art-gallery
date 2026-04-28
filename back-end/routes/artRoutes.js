@@ -598,4 +598,166 @@ export default function(app, upload) {
             res.status(500).json({error: err});
         }
     });
+
+    // post comment to art
+    /** 
+     * @swagger
+     * /arts/{id}/comments:
+     *   post:
+     *     tags: [Arts]
+     *     summary: Post a comment to an art piece
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the art piece to comment on
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               user_id:
+     *                 type: string
+     *               comment:
+     *                 type: string
+     *             required:
+     *               - user_id
+     *               - comment_text
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       201:
+     *         description: Comment posted successfully
+     *       400:
+     *         description: Bad request
+     *       500:
+     *         description: Internal server error
+     */
+    app.post('/arts/:id/comments', authentication, async (req, res) => {
+        const artId = req.params.id;
+        const { user_id, comment_text } = req.body;
+
+        // Validate required fields
+        if (!user_id || !comment_text) {
+            return res.status(400).json({ message: "One or more required fields are missing" });
+        }
+
+        try {
+            // generate a UUID for the comment ID
+            const id = uuidv4().replace(/-/g, '');
+
+            // Insert the comment into the database
+            await pool.query(
+                `INSERT INTO comments (id, art_id, user_id, comment_text) VALUES (UNHEX(?), UNHEX(?), UNHEX(?), ?)`,
+                [id, artId, user_id, comment_text]
+            );
+            res.status(201).json({ message: "Comment posted successfully" });
+        } catch (err) {
+            console.error("Error adding comment:", err);
+            res.status(500).json({ message: "Failed to add comment" });
+        }
+    });
+
+    // get comments for an art piece
+    /** 
+     * @swagger
+     * /arts/{id}/comments:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Get comments for an art piece
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the art piece to fetch comments for
+     *     responses:
+     *       200:
+     *         description: A list of comments for the specified art piece
+     *       404:
+     *         description: Art piece not found
+     *       500:
+     *         description: Internal server error
+     */
+    app.get('/arts/:id/comments', async (req, res) => {
+        const artId = req.params.id;
+
+        try {
+            // Search for comments related to the specified art piece
+            const [rows] = await pool.query(
+                `SELECT c.comment, c.created_at, u.username
+                FROM comments c
+                JOIN users u ON c.user_id = u.id
+                WHERE c.art_id = UNHEX(?)`,
+                [artId]
+            );
+            // Map the comments to a more readable format
+            const comments = rows.map((comment) => ({
+                comment: comment.comment,
+                createdAt: comment.created_at,
+                username: comment.username
+            }));
+
+            res.status(200).json({ comments });
+        } catch (err) {
+            console.error("Error fetching comments:", err);
+            res.status(500).json({ message: "Failed to fetch comments" });
+        }
+    });
+
+    // delete comment by id
+    /** 
+     * @swagger
+     * /arts/{artId}/comments/{commentId}:
+     *   delete:
+     *     tags: [Arts]
+     *     summary: Delete a comment by ID
+     *     parameters:
+     *       - in: path
+     *         name: artId
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the art piece the comment belongs to
+     *       - in: path
+     *         name: commentId
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the comment to delete
+     *     security:
+     *       - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Comment deleted successfully
+     *       404:
+     *         description: Comment not found
+     *       500:
+     *         description: Internal server error
+     */
+    app.delete('/arts/:artId/comments/:commentId', authentication, async (req, res) => {
+        const { artId, commentId } = req.params;
+
+        try {
+            // Delete the comment from the database
+            const [result] = await pool.query(
+                `DELETE FROM comments WHERE id = UNHEX(?) AND art_id = UNHEX(?)`,
+                [commentId, artId]
+            );
+
+            if (!result || result.affectedRows === 0) {
+                return res.status(404).json({ message: "Comment not found" });
+            }
+
+            res.status(200).json({ message: "Comment deleted successfully" });
+        } catch (err) {
+            console.error("Error deleting comment:", err);
+            res.status(500).json({ message: "Failed to delete comment" });
+        }
+    });
 }
