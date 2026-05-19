@@ -5,6 +5,7 @@ import Topbar from "../components/topbar/topbar";
 import { fetchArtById } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
 import ShowArtDetails from "../components/showArtDetails/showArtDetails";
+import ArtComments from "../components/ArtComments/ArtComments";
 
 
 function Art() {
@@ -64,9 +65,7 @@ function Art() {
             </div>
             
             {/*bottom*/}
-            <div className="comments">
-                <h5>Comments</h5>
-            </div>
+            <ArtComments artId={artState?.id || ""} />
 
         </div>
     );

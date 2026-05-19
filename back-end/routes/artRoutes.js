@@ -626,7 +626,7 @@ export default function(app, upload) {
      *                 type: string
      *             required:
      *               - user_id
-     *               - comment_text
+     *               - comment
      *     security:
      *       - bearerAuth: []
      *     responses:
@@ -639,10 +639,10 @@ export default function(app, upload) {
      */
     app.post('/arts/:id/comments', authentication, async (req, res) => {
         const artId = req.params.id;
-        const { user_id, comment_text } = req.body;
+        const { user_id, comment } = req.body;
 
         // Validate required fields
-        if (!user_id || !comment_text) {
+        if (!user_id || !comment) {
             return res.status(400).json({ message: "One or more required fields are missing" });
         }
 
@@ -652,8 +652,8 @@ export default function(app, upload) {
 
             // Insert the comment into the database
             await pool.query(
-                `INSERT INTO comments (id, art_id, user_id, comment_text) VALUES (UNHEX(?), UNHEX(?), UNHEX(?), ?)`,
-                [id, artId, user_id, comment_text]
+                `INSERT INTO comments (id, art_id, user_id, comment) VALUES (UNHEX(?), UNHEX(?), UNHEX(?), ?)`,
+                [id, artId, user_id, comment]
             );
             res.status(201).json({ message: "Comment posted successfully" });
         } catch (err) {

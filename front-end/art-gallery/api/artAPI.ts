@@ -1,5 +1,6 @@
-  import type { Art, ArtsResponse } from '../models/artModel.ts';
-  import type {ArtPath} from '../models/artPathModel.ts';
+  import type { ArtComment } from '../models/artCommentModel.ts';
+import type { Art, ArtsResponse } from '../models/artModel.ts';
+  import type { ArtPath } from '../models/artPathModel.ts';
   
   const serverURL = "http://localhost:5000/";
 
@@ -213,5 +214,62 @@
     }
   }
 
+  // post a new comment for an art
+  async function postComment(artId: string, userId: string, comment: string ) {
+    console.log(`Posting comment for art ${artId} by user ${userId}: ${comment}`);
+    try {
 
-  export { fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById };
+      const res: Response = await fetch(`${serverURL}arts/${artId}/comments`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          comment: comment,
+        }),
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        return { success: false, error: JSON.stringify(data) };
+      }
+
+      return { success: true, data };
+    
+    } catch (error) {
+      console.error("Error posting comment:", error);
+      return {success: false, error: "Posting comment failed"}
+    }
+  }
+
+  //fetch comments for an art
+  async function fetchArtComments(artId: string) : Promise<ArtComment[]> {
+    try {
+      const res: Response = await fetch(`${serverURL}arts/${artId}/comments`, {
+        method: "GET",
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.toString());
+      }
+
+      return data.comments.map((comment: ArtComment) => ({
+        username: comment.username,
+        comment: comment.comment,
+        createdAt: new Date(comment.createdAt)
+      }));
+    
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      return [];
+    }
+  }
+
+
+  export { 
+    fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById, 
+    postComment, fetchArtComments
+  };
