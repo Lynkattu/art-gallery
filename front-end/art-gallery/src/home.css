@@ -25,3 +25,18 @@
     scrollbar-width: none;
     margin-top: 1em;
 }
+
+
+@media (max-width: 600px) {
+
+    .home .search {
+        flex-direction: column;
+        gap: 0.5em;
+    }
+
+    .home > h1 {
+        font-size: 1.5rem;
+        margin: 0;
+    }
+}
+

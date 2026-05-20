@@ -1,28 +1,31 @@
 .searched-art {
     overflow: auto;
     scrollbar-width: none;
-    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .searched-art ul {
-    position: relative;
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
     list-style-type: none;
-    justify-content: center;
     padding: 0;
     margin: 0;
-}
-.searched-art ul li {
-    position: relative;
-    transition: all 0.3s ease-in-out;
-    margin: 10px;
-    width: 18%;
+    gap: 20px;
+    justify-content: center;
 }
 
-.searched-art ul li > img {
+.searched-art-card {
     position: relative;
+    transition: all 0.3s ease-in-out;
+    flex: 0 0 18%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.searched-art-card > img {
+    position: relative;
+    display: block;
     width: 100%;
     object-fit: cover;
     border-radius: 10px;
@@ -30,27 +33,60 @@
     transition: all 0.3s ease-in-out;
 }
 
-.searched-art ul li:hover {
+.searched-art-card:hover {
     transform: scale(1.05);
     transition: all 0.3s ease-in-out;
     cursor: pointer;
 }
 
-.searched-art ul li > p {
+.searched-art-card p {
+    display: block;
     font-size: 1.2rem;
     font-weight: bold;
-    margin-bottom: 0.4rem;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    max-width: 100%;
 }
 
-.searched-art ul li p:last-child {
-    position: absolute;
-    padding: 0.5rem;
-    font-size: 0.75rem;
-    bottom: 5px;
-    left: 5px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 6px;
+.searched-art-card p:last-child {
+  position: absolute;
+  bottom: 0.4rem;
+  left: 0.4rem;
+  padding: 0.4rem;
+  font-size: 0.6rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  margin: 0;
+  width: auto;
 }
 
 
 
+@media (min-width: 601px) and (max-width: 1000px) {
+    .searched-art-card {
+        flex: 0 0 30%;
+    }
+    .searched-art-card p:last-child {
+        font-size: 0.5rem;
+        padding: 0.3rem;
+        bottom: 0.3rem;
+        left: 0.3rem;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 600px) {
+    .searched-art-card {
+        flex: 0 0 45%;
+    }
+    .searched-art-card p:last-child {
+        font-size: 0.5rem;
+        padding: 0.2rem;
+        bottom: 0.2rem;
+        left: 0.2rem;
+        border-radius: 6px;
+    }
+}

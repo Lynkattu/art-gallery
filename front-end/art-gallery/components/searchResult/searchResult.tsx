@@ -13,7 +13,7 @@ function SearchResult({ results }: Props) {
     return <div className='searched-art'>
         <ul>
             {results.map((result, index) => (
-                <li key={index} onClick={() => {
+                <li className='searched-art-card' key={index} onClick={() => {
                     navigate(`/art/${result.id}`, { state: { art: result } });
                 }}>
                     <p>{result.title}</p>

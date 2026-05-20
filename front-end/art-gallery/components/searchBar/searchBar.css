@@ -8,9 +8,10 @@
     margin: auto;
     height: 2.5rem;
     padding: 0.5em;
-    width: 300px;
+    width: 100%;
     border-radius: 8px 0 0 8px;
     border: none;
+    max-width: 600px;
 }
 
 .search-bar input:focus {

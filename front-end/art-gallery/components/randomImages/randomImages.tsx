@@ -1,4 +1,4 @@
-import './randomImages.css';
+import '../searchResult/searchResult.css';
 import { useEffect, useState } from 'react';
 import { fetchRandomArtPaths } from '../../api/artAPI.ts';
 import type { ArtPath } from '../../models/artPathModel.ts';
@@ -26,10 +26,10 @@ function RandomImages({ imageCount }: Props) {
 
     }, [imageCount]);
 
-    return <div className='random-images'>
+    return <div className='searched-art'>
         <ul>
             {imagePaths.map((result) => (
-                <li key={result.id} onClick={() => {
+                <li className="searched-art-card" key={result.id} onClick={() => {
                     navigate(`/art/${result.id}`, { state: { art: result } });
                 }}>
                     <p>{result.title}</p>
