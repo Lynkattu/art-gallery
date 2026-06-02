@@ -41,20 +41,25 @@ function Login() {
 
   return <div>
     <Topbar/>
-    <h1>Login</h1>
-    <form className="loginform" onSubmit={handleSubmit}>
-      <ul>
-        <li>
-          <input name="email" placeholder='Enter email' onChange={handleChange} />
-        </li>
-        <li>
-          <input name="password" type="password" placeholder='Enter password' onChange={handleChange} />
-        </li>
-        <li>
-          <button type="submit">Login</button>
-        </li>
-      </ul>
-    </form>
+    <div className="login-container">
+      <h1>Login</h1>
+      <form className="loginform" onSubmit={handleSubmit}>
+        <ul>
+          <li>
+            <input name="email" placeholder='Enter email' onChange={handleChange} />
+          </li>
+          <li>
+            <input name="password" type="password" placeholder='Enter password' onChange={handleChange} />
+          </li>
+          <li>
+            <div className="login-btns">
+              <button onClick={() => navigate('/reset-password')}>Forgot Password?</button>
+              <button type="submit">Login</button>
+            </div>
+          </li>
+        </ul>
+      </form>
+    </div>
     <ToastContainer />
   </div>;
 }

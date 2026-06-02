@@ -34,4 +34,27 @@ async function getUserProfile () {
     }
 }
 
-export { getUserProfile, postUserLogin };
+// send password reset link to user's email
+async function sendResetLink(email: string) {
+    try {
+        if (!email) {
+            console.log("Email missing");
+            throw new Error("Email is required");
+        }
+
+        const res = await fetch("http://localhost:5000/users/forgot-password", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email }),
+            credentials: "include"
+        });
+        return res;
+    } catch (error) {
+        console.error("Error sending reset link:", error);
+        throw error;
+    }
+}
+
+export { getUserProfile, postUserLogin, sendResetLink };

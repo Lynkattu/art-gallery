@@ -8,6 +8,19 @@ users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+password_resets (
+    id BINARY(16) PRIMARY KEY,
+    user_id BINARY(16) NOT NULL,
+    token_hash VARCHAR(255) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (user_id) 
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
 arts (
     id BINARY(16) PRIMARY KEY,
     user_id BINARY(16) NOT NULL,
