@@ -1,17 +1,14 @@
 import './login.css';
 import Topbar from '../components/topbar/topbar';
 
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { sendResetLink } from '../api/userAPI';
 import { toast, ToastContainer } from 'react-toastify';
 
 function ResetPassword() {
-    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+        email: "",
     });
 
     // handle input changes for all fields

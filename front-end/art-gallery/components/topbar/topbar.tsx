@@ -8,7 +8,6 @@ function Topbar() {
 
     const { user, logoutUser } = useContext(UserContext);
     
-
     return user !== null ? (
         <div className='topbar'>
             <a className='topbar-logo' href="/"><img src="http://localhost:5000/site_images/ArtGalleryLogo.png" alt="Art Gallery Logo"/></a>

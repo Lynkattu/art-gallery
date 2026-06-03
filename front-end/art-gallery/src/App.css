@@ -6,6 +6,14 @@ body,html {
     box-sizing: border-box;
 }
 
+:root {
+    font-family: 'Arial', sans-serif;
+    color: white;
+    --secondary-color: #0B223A;
+    --secondary-color-hover: #023e8a;
+    --background-color: rgba(0, 0, 0, 0.3);
+}
+
 #root {
   background-image: url("./assets/background.jpg");
   background-size: cover;

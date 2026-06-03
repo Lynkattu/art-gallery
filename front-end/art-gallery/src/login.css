@@ -8,6 +8,13 @@
 
 .loginform {
   margin: 0 auto;
+  padding: 15px 30px;
+  border-radius: 12px;
+  background-color: var(--background-color);
+}
+
+.loginform h1 {
+  margin: 0;
 }
 
 .loginform ul {
@@ -15,19 +22,33 @@
   list-style: none;
   padding: 0;
 }
+.loginform li > input {
+  margin-bottom: 20px;
+  padding: 5px;
+  width: 100%;
+  font-size: 1em;
+}
 
 .login-btns {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
 }
+
 .login-btns button {
-  margin: 10px 0;
-  margin-right: 10px;
-  padding: 5px 10px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--secondary-color);
+  font-size: 1em;
+}
+.login-btns button:hover {
+  background-color: var(--secondary-color-hover);
 }
 
 .login-btns button:first-child {
   background-color: transparent;
+  margin-right: 10px;
+  padding: 0;
   border: none;
   color: blue;
   cursor: pointer;
