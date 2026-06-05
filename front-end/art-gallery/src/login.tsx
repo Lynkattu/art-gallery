@@ -43,7 +43,7 @@ function Login() {
     <Topbar/>
     <div className="login-container">
       <div className="loginform">
-        <h1>Login</h1>
+        <h2>Login</h2>
         <form onSubmit={handleSubmit}>
           <ul>
             <li>
