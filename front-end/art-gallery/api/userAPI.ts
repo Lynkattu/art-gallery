@@ -57,4 +57,28 @@ async function sendResetLink(email: string) {
     }
 }
 
-export { getUserProfile, postUserLogin, sendResetLink };
+// reset password using token from email link
+async function resetPassword(token: string, newPassword: string) {
+    console.log("Trying to reset password with token:", token);
+    try {
+        if (!token || !newPassword) {
+            console.log("Token or new password missing");
+            throw new Error("Token and new password are required");
+        }
+
+        const res = await fetch(`http://localhost:5000/users/reset-password`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ password: newPassword, token: token }),
+            credentials: "include"
+        });
+        return res;
+    } catch (error) {
+        console.error("Error resetting password:", error);
+        throw error;
+    }
+}
+
+export { getUserProfile, postUserLogin, sendResetLink, resetPassword };

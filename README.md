@@ -24,8 +24,16 @@ PORT = 5000
 <br>
 JWT_SECRET = your jwt secret (can be anything)
 <br>
+JWT_RESET_SECRET= you reset secret (can be anything)
+<br>
+FRONTEND_URL=your url example http://localhost:5173
+<br>
+EMAIL_USER= your cms email adress
+<br>
+EMAIL_PASS= your cms password, this is not your email's actual password
+<br>
 NODE_ENV=development
-6. Frontend starts like any react app with *npm run dev* command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder.
+1. Frontend starts like any react app with *npm run dev* command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder.
 
 ## API Documentation (Swagger)
 API docementation is created by using swagger.

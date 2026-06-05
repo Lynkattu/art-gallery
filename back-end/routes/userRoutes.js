@@ -251,8 +251,15 @@ export default function(app) {
     app.post("/users/forgot-password", async (req, res) => {
     try {
         const { email } = req.body;
+        // Get user ID by email for token generation, but do not reveal if email exists
         const [users] = await pool.query(
-            "SELECT * FROM users WHERE email = ?",
+            `
+            SELECT
+                BIN_TO_UUID(id) AS id,
+                email
+            FROM users
+            WHERE email = ?
+            `,
             [email]
         );
         // Check if user exists - but always return success message to prevent email enumeration
@@ -293,7 +300,7 @@ export default function(app) {
             `
             UPDATE password_resets
             SET used_at = NOW()
-            WHERE user_id = ?
+            WHERE user_id = UUID_TO_BIN(?)
             AND used_at IS NULL
             `,
             [user.id]
@@ -306,8 +313,8 @@ export default function(app) {
         await pool.query(
             `
             INSERT INTO password_resets
-            (id,user_id, token_hash, expires_at)
-            VALUES (UNHEX(?), ?, ?, ?)
+            (id, user_id, token_hash, expires_at)
+            VALUES (UNHEX(?), UUID_TO_BIN(?), ?, ?)
             `,
             [id, user.id, tokenHash, expiresAt]
         );
@@ -385,13 +392,12 @@ export default function(app) {
      *         description: Internal server error
      */
 
-    app.post("/reset-password", async (req, res) => {
+    app.post("/users/reset-password", async (req, res) => {
         try {
             const { token, password } = req.body;
-
+            console.log("Reset password request received with token:", token);
             //Verify JWT Signature and Expiration
             let decoded;
-
             try {
                 decoded = jwt.verify(
                     token,
@@ -437,15 +443,18 @@ export default function(app) {
 
         // Hash Password
         const hashedPassword = await bcrypt.hash(password, 10);
+
         // Update User Password
-        await pool.query(
+        const [result] = await pool.query(
             `
             UPDATE users
             SET password = ?
-            WHERE id = ?
+            WHERE id = UUID_TO_BIN(?)
             `,
             [hashedPassword, decoded.userId]
         );
+
+        console.log("Update result:", result);
 
         // Mark Token Used
         await pool.query(

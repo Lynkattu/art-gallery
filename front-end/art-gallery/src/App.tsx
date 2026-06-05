@@ -8,6 +8,7 @@ import Profile from './profile';
 import PersonalArt from './PersonalArt';
 import Art from './art';
 import ResetPassword from './resetPassword.tsx';
+import ForgotPassword from './forgotPassword.tsx';
 
 
 function App() {
@@ -23,7 +24,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile/>} />
         <Route path="/personal-art" element={<PersonalArt/>} />
-        <Route path="/reset-password" element={<ResetPassword/>} />
+        <Route path="/forgot-password" element={<ForgotPassword/>} />
+        <Route path="/reset-password/:token" element={<ResetPassword/>} />
       </Routes>
     </BrowserRouter>
     </UserAuthProvider>
