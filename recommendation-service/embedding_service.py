@@ -1,7 +1,6 @@
 from PIL import Image
 import torch
 from transformers import CLIPProcessor, CLIPModel
-import numpy as np
 
 # determine if GPU is available and set device accordingly
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -23,6 +22,3 @@ def get_embedding(image_path):
     # Normalize for cosine similarity
     features = features / features.norm(dim=-1, keepdim=True)
     return features.detach().cpu().numpy()[0]
-
-numpy_embedding = get_embedding("../back-end/images/1769363670658-258818723-Templar.jpg")
-print(numpy_embedding)

@@ -35,6 +35,17 @@ arts (
         ON DELETE CASCADE
 );
 
+embedded_arts (
+    id BINARY(16) PRIMARY KEY,
+    embedding BLOB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
+    CONSTRAINT fk_arts
+        FOREIGN KEY (id)
+        REFERENCES arts(id)
+        ON DELETE CASCADE
+);
+
 tags (
     id BINARY(16) PRIMARY KEY,
     name VARCHAR(64) NOT NULL UNIQUE
