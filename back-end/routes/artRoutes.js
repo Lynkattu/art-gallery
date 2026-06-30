@@ -307,7 +307,7 @@ export default function(app, upload) {
                 await fs.unlink(path.join(rootPath, `images/${req.file.filename}`)); // delete the uploaded file
                 return res.status(400).json({ error: "Title, description, and user_id are required" });
             }
-            // generate a UUID for the user ID
+            // generate a UUID for the art ID
             const id = uuidv4().replace(/-/g, '');
 
             await pool.query(
@@ -322,13 +322,15 @@ export default function(app, upload) {
             // Check existing tags if provided
             if (req.body.tags) {
                 const tags = JSON.parse(req.body.tags);
-                const [rows] = await pool.query(
-                    "SELECT HEX(id) as id, name FROM tags WHERE name IN (?)",
-                    [tags]
-                );
-                tagsId = rows.map(row => row.id);
-                const existing_tags = rows.map(row => row.name);
-                tagsToInsert = tags.filter(tag => !existing_tags.includes(tag));
+                if (Array.isArray(tags) && tags.length > 0) {
+                    const [rows] = await pool.query(
+                        "SELECT HEX(id) as id, name FROM tags WHERE name IN (?)",
+                        [tags]
+                    );
+                    tagsId = rows.map(row => row.id);
+                    const existing_tags = rows.map(row => row.name);
+                    tagsToInsert = tags.filter(tag => !existing_tags.includes(tag));
+                }
             }
 
             // Insert tags if provided
@@ -358,6 +360,18 @@ export default function(app, upload) {
                     VALUES ${placeholders}`,
                     values
                 );
+            }
+            // create embedding for the uploaded art
+            const response = await fetch(`http://localhost:8000/embeddings/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ file_path: path.join(rootPath, `images/${req.file.filename}`) })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Failed to generate embedding: ${response.statusText}`);
             }
 
             res.status(201).json({ message: "Art uploaded successfully" });

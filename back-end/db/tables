@@ -38,7 +38,7 @@ arts (
 embedded_arts (
     id BINARY(16) PRIMARY KEY,
     embedding BLOB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_arts
         FOREIGN KEY (id)
