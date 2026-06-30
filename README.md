@@ -33,7 +33,20 @@ EMAIL_USER= your cms email adress
 EMAIL_PASS= your cms password, this is not your email's actual password
 <br>
 NODE_ENV=development
-1. Frontend starts like any react app with *npm run dev* command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder.
+
+6. Create .env file inside recommendation-service folder the File must contain next data:
+<br>
+DB_PASSWORD = your db password
+<br>
+DB_NAME = your database name
+<br>
+DB_PORT = 3306
+<br>
+DB_HOST = "127.0.0.1"
+<br>
+DB_USER = your database user
+
+7. Frontend starts like any react app with **npm run dev** command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder.
 
 ## API Documentation (Swagger)
 API docementation is created by using swagger.
