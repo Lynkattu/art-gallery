@@ -3,6 +3,11 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   import type { ArtPath } from '../models/artPathModel.ts';
   
   const serverURL = "http://localhost:5000/";
+  const mlServerURL = "http://localhost:8000/";
+
+  type PostArtResult<T> =
+  | { success: true; data: T }
+  | { success: false; error: string };
 
   // fetch all art info from the backend API
   async function fetchAllArt(): Promise<void> {
@@ -126,11 +131,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   }
 
   // post new art
-  type PostArtResult =
-  | { success: true; data: any }
-  | { success: false; error: string };
-
-  async function postNewArt(art: Art): Promise<PostArtResult> {
+  async function postNewArt(art: Art): Promise<PostArtResult<any>> {
     try {
       console.log("Posting new art:", art);
       if (!art.title || !art.description || !art.user_id || !art.file) {
@@ -166,7 +167,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   }
 
   // update art
-  async function updateArt (art: Art): Promise<PostArtResult> {
+  async function updateArt (art: Art): Promise<PostArtResult<any>> {
     console.log("updating art: ",art.id)
     try {
       const res: Response = await fetch(`${serverURL}arts/${art.id}`, {
@@ -194,7 +195,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   }
 
   // delete art
-  async function deleteArt (id: string): Promise<PostArtResult> {
+  async function deleteArt (id: string): Promise<PostArtResult<any>> {
     try {
       const res: Response = await fetch(`${serverURL}arts/${id}`, {
         method: 'DELETE',
@@ -267,9 +268,39 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
       return [];
     }
   }
+  
+  // fetch similar arts from ML server
+  async function fetchSimilarArts(artId: string) : Promise<PostArtResult<ArtPath[]>> {
+    try {
+      const res: Response = await fetch(`${mlServerURL}recommendations/${artId}`, {
+        method: "GET",
+      });
+      const data = await res.json();
+            console.log("Fetched similar arts: ", data);
 
 
-  export { 
-    fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById, 
-    postComment, fetchArtComments
-  };
+      if (!res.ok) {
+        return {success: false, error: JSON.stringify(data)};
+      }
+      const arts: ArtPath[] = data.map((art: any) => ({
+        id: art.id ? art.id : null,
+        title: art.title ? art.title : null,
+        description: art.description ? art.description : null,
+        imageUrl: `${serverURL}images/${art.imageUrl}`,
+        tags: art.tags ? art.tags : [],
+        createdAt: art.createdAt ? new Date(art.createdAt) : null,
+        artist: art.artist ? art.artist : null
+      }));
+
+      return {success: true, data: arts};
+    } catch (error) {
+      return {success: false, error: "Failed to fetch similar arts"}
+    }
+  }
+
+
+export {
+  fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById,
+  postComment, fetchArtComments, fetchSimilarArts
+};
+export type { PostArtResult };

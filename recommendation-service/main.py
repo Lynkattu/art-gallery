@@ -4,9 +4,26 @@ from embedding_service import get_embedding
 from similarity_service import cosine_similarity
 import json
 from pydantic import BaseModel, field_validator
+from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
 
 ### use command below to run the server ###
 #   python -m uvicorn main:app --reload   #
+
+app = FastAPI()
+
+origins = [
+    "http://localhost:5000",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],      # GET, POST, PUT, DELETE, etc.
+    allow_headers=["*"],      # Allow all headers
+)
 
 class EmbeddingRequest(BaseModel):
     file_path: str
@@ -17,11 +34,6 @@ class EmbeddingRequest(BaseModel):
             raise ValueError("file_path must not be empty")
         return value
 
-app = FastAPI()
-
-@app.get("/")
-def read_root():
-    return {"Welcome to the Art Recommendation Service!"}
 
 #### generate embeddings for a given artwork and store them in the database. If the embedding already exists, it will be updated. ###
 @app.post("/embeddings/{art_id}")
@@ -40,7 +52,7 @@ async def create_embedding(art_id: str, request: EmbeddingRequest):
 
     return {"message": "Embedding created successfully"}
 
-
+### get similar artworks based on the embedding of the provided artwork ID. 
 @app.get("/recommendations/{art_id}")
 def get_similar_artworks(
     art_id: str,
@@ -54,7 +66,7 @@ def get_similar_artworks(
         # Fetch the embedding for the target artwork from the database
         cursor.execute("""
             SELECT embedding
-            FROM art_embeddings
+            FROM embedded_arts
             WHERE id = UNHEX(REPLACE(%s, '-', ''))
         """, (art_id,))
 
@@ -66,8 +78,8 @@ def get_similar_artworks(
                 status_code=404,
                 detail="Artwork embedding not found"
             )
-
-        target_embedding = json.loads(target[0])
+             
+        target_embedding = np.frombuffer(target[0], dtype=np.float32)
 
         # Fetch all artworks and their embeddings from the database
         cursor.execute("""
@@ -77,7 +89,7 @@ def get_similar_artworks(
                 a.filePath,
                 e.embedding
             FROM arts a
-            JOIN art_embeddings e
+            JOIN embedded_arts e
                 ON a.id = e.id
         """)
 
@@ -86,7 +98,7 @@ def get_similar_artworks(
         # Calculate cosine similarity between the target embedding and each artwork's embedding
         for row in cursor.fetchall():
 
-            embedding = json.loads(row[3])
+            embedding = np.frombuffer(row[3], dtype=np.float32)
 
             score = cosine_similarity(
                 target_embedding,
@@ -96,7 +108,7 @@ def get_similar_artworks(
             recommendations.append({
                 "id": row[0],
                 "title": row[1],
-                "filePath": row[2],
+                "imageUrl": row[2],
                 "score": float(score)
             })
 
@@ -113,6 +125,8 @@ def get_similar_artworks(
             if item["id"].lower().replace("-", "")
             != art_id.lower().replace("-", "")
         ]
+
+        print(f"Recommendations for art_id {art_id}: {recommendations[:limit]}")
 
         # Limit the number of recommendations returned
         return recommendations[:limit]

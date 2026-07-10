@@ -7,15 +7,16 @@ import { useNavigate } from "react-router-dom";
 
 type Props = {
     imageCount?: number;
+    artPaths?: ArtPath[];
 };
 
-function RandomImages({ imageCount }: Props) {
+function RandomImages({ imageCount, artPaths }: Props) {
     const navigate = useNavigate();
 
     const [imagePaths, setImagePaths] = useState<ArtPath[]>([]);
 
     useEffect(() => {
-        console.log(imageCount);
+        if (!artPaths || artPaths.length <= 0) {
         const loadImages = async () => {
             const paths = await fetchRandomArtPaths(imageCount || 0);
             setImagePaths(paths);
@@ -23,8 +24,11 @@ function RandomImages({ imageCount }: Props) {
         };
 
         loadImages();
+    } else {
+        setImagePaths(artPaths);
+    }
 
-    }, [imageCount]);
+    }, [imageCount, artPaths]);
 
     return <div className='searched-art'>
         <ul>
