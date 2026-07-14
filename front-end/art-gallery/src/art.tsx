@@ -52,9 +52,9 @@ function Art() {
         }
     }, [location.state?.art]);
 
+    // Fetch similar arts
     useEffect(() => {
-        if (similarArts.length === 0 && artState && artState.id) {
-            // Fetch similar arts based on the current art's ID
+        if (artState && artState.id) {
             getSimilarArts(artState.id)
         }
     }, [artState]);

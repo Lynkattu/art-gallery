@@ -288,7 +288,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
         description: art.description ? art.description : null,
         imageUrl: `${serverURL}images/${art.imageUrl}`,
         tags: art.tags ? art.tags : [],
-        createdAt: art.createdAt ? new Date(art.createdAt) : null,
+        createdAt: art.createdAt ? art.createdAt : null,
         artist: art.artist ? art.artist : null
       }));
 

@@ -87,10 +87,28 @@ def get_similar_artworks(
                 HEX(a.id) as id,
                 a.title,
                 a.filePath,
-                e.embedding
+                a.description,
+                u.username as artist,
+                a.created_at,
+                e.embedding,
+                GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') AS tags
             FROM arts a
             JOIN embedded_arts e
                 ON a.id = e.id
+            JOIN users u
+                ON a.user_id = u.id
+            LEFT JOIN art_tags at
+                ON a.id = at.art_id
+            LEFT JOIN tags t
+                ON at.tag_id = t.id
+            GROUP BY
+                a.id,
+                a.title,
+                a.filePath,
+                a.description,
+                u.username,
+                a.created_at,
+                e.embedding
         """)
 
         recommendations = []
@@ -98,7 +116,7 @@ def get_similar_artworks(
         # Calculate cosine similarity between the target embedding and each artwork's embedding
         for row in cursor.fetchall():
 
-            embedding = np.frombuffer(row[3], dtype=np.float32)
+            embedding = np.frombuffer(row[6], dtype=np.float32)
 
             score = cosine_similarity(
                 target_embedding,
@@ -109,7 +127,11 @@ def get_similar_artworks(
                 "id": row[0],
                 "title": row[1],
                 "imageUrl": row[2],
-                "score": float(score)
+                "description": row[3],
+                "artist": row[4],
+                "createdAt": row[5],
+                "score": float(score),
+                "tags": row[7]
             })
 
         # Sort the recommendations by similarity score in descending order
