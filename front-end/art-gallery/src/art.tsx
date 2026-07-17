@@ -2,7 +2,7 @@ import { useEffect, useState, type JSX } from "react";
 import "./art.css";
 import { useLocation } from "react-router-dom";
 import Topbar from "../components/topbar/topbar";
-import { fetchArtById, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
+import { fetchArtById, fetchRandomArtsFromUser, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
 import ShowArtDetails from "../components/showArtDetails/showArtDetails";
 import ArtComments from "../components/ArtComments/ArtComments";
@@ -15,7 +15,9 @@ function Art() {
     const { art } = location.state || {};
     const [artState, setArtState] = useState<ArtPath | null>(null);
     const [similarArts, setSimilarArts] = useState<ArtPath[]>([]);
+    const [randomArtsFromUser, setRandomArtsFromUser] = useState<ArtPath[]>([]);
 
+    // Fetch art from URL if not in location state
     async function fetchArtFromUrl() {
         const data = await fetchArtById(location.pathname.split("/").pop() || "")
         if (!data) {
@@ -26,6 +28,7 @@ function Art() {
         setArtState(data);
     }
 
+    // Fetch similar arts
     async function getSimilarArts(artId: string) {
         const data: PostArtResult<ArtPath[]> = await fetchSimilarArts(artId);
         if (data.success) {
@@ -33,6 +36,16 @@ function Art() {
         }
     }
 
+    // Fetch random arts from the same artist
+    async function getRandomArtsFromUser(username: string, count: number) {
+        const data: PostArtResult<ArtPath[]> = await fetchRandomArtsFromUser(username, count);
+        if (data.success) {
+            // Handle the random arts from user data as needed
+            setRandomArtsFromUser(data.data);
+        }
+    }
+
+    // main art useEffect, check if art is in location state, if not fetch from URL
     useEffect(() => {
         if (art && Object.keys(art).length > 0) {
             console.log("Using art from location state: ", art);
@@ -59,6 +72,13 @@ function Art() {
         }
     }, [artState]);
 
+    // Fetch random arts from the same artist
+    useEffect(() => {
+        if (artState && artState.artist) {
+            getRandomArtsFromUser(artState.artist, 10);
+        }
+    }, [artState]);
+
     const artPage: JSX.Element = (
         <div className="art-page">
             <div className="art">
@@ -82,6 +102,12 @@ function Art() {
                 </div>
                 <div className="artist-art">
                     <h5>More from this Artist</h5>
+
+                    {randomArtsFromUser.length > 0 ? (
+                        <RandomImages artPaths={randomArtsFromUser} imageCount={10} />
+                    ) : (
+                        <p>No arts from this artist found.</p>
+                    )}
                 </div>
             </div>
             </div>

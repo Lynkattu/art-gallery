@@ -298,9 +298,38 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
     }
   }
 
+  async function fetchRandomArtsFromUser(username: string, count: number): Promise<PostArtResult<ArtPath[]>> {
+    try {
+      const res: Response = await fetch(`${serverURL}arts/random/user/${username}/${count}`);
+      const data = await res.json();
+
+      if (!res.ok) {
+        return {success: false, error: JSON.stringify(data)};
+      }
+
+      const arts: ArtPath[] = data.arts.map((art: any) => ({
+        id: art.id,
+        title: art.title,
+        description: art.description,
+        imageUrl: `${serverURL}images/${art.filePath}`,
+        tags: art.tags,
+        createdAt: art.createdAt,
+        artist: art.username
+      }));
+
+      console.log("random arts from user: ", arts);
+
+
+      return {success: true, data: arts};
+    } catch (error) {
+      console.error("Error fetching random arts from user:", error);
+      return {success: false, error: "Failed to fetch random arts from user"};
+    }
+  }
+
 
 export {
   fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById,
-  postComment, fetchArtComments, fetchSimilarArts
+  postComment, fetchArtComments, fetchSimilarArts, fetchRandomArtsFromUser
 };
 export type { PostArtResult };

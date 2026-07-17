@@ -774,4 +774,61 @@ export default function(app, upload) {
             res.status(500).json({ message: "Failed to delete comment" });
         }
     });
+
+    // Get random art pieces for a specific user
+    /** 
+     * @swagger
+     * /arts/random/user/{userName}/{count}:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Get random art pieces for a specific user
+     *     parameters:
+     *       - in: path
+     *         name: userName
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The username of the artist
+     *       - in: path
+     *         name: count
+     *         schema:
+     *           type: integer
+     *         required: true
+     *         description: Number of random art pieces to fetch
+     *     responses:
+     *        200:
+     *          description: A list of random art pieces for the specified user
+     *        404:
+     *          description: No art found for the specified user
+     *        500:
+     *          description: Internal server error
+     */
+    app.get('/arts/random/user/:userName/:count', async (req, res) => {
+        const userName = req.params.userName;
+        const count = parseInt(req.params.count);
+        console.log("Fetching random art for user:", userName);
+
+        try {
+            const [rows] = await pool.query(
+            `
+            SELECT *
+            FROM Arts
+            JOIN Users u ON Arts.user_id = u.id
+            WHERE u.username = ?
+            ORDER BY RAND()
+            LIMIT ?;
+            `
+            , [userName, count]);
+
+            if (!rows || rows.length === 0) {
+                return res.status(404).json({ message: "No art found for the specified user" });
+            }
+
+            res.status(200).json({ arts: rows });
+
+        } catch (err) {
+            console.error("Error fetching random art for user:", err);
+            res.status(500).json({ message: "Failed to fetch random art for user" });
+        }
+    });
 }
