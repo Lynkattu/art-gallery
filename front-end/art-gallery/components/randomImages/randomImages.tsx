@@ -1,4 +1,4 @@
-import '../searchResult/searchResult.css';
+import './randomImages.css';
 import { useEffect, useState } from 'react';
 import { fetchRandomArtPaths } from '../../api/artAPI.ts';
 import type { ArtPath } from '../../models/artPathModel.ts';

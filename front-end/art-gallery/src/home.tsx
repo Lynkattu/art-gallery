@@ -9,7 +9,6 @@ import { ToastContainer } from "react-toastify/unstyled";
 import type { ArtPath } from '../models/artPathModel';
 import { useSearchParams } from 'react-router-dom';
 import { fetchArtBySearch } from '../api/artAPI';
-import SearchResult from '../components/searchResult/searchResult';
 
 function Home() {
   const [searchParams] = useSearchParams();
@@ -50,7 +49,7 @@ function Home() {
         </div>
         <div className="random-arts">
           {searchResults.length > 0 && search?.length !== 0 
-          ? <SearchResult results={searchResults} /> 
+          ? <RandomImages artPaths={searchResults} /> 
           : <RandomImages imageCount={imageCount} />}
         </div>
         <ToastContainer />
