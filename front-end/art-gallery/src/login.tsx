@@ -26,6 +26,13 @@ function Login() {
   // handle form submission
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault(); // prevents page navigation
+    if (!formData.email || !formData.password) {
+      toast.error("Please fill in all fields", {
+        position: 'bottom-center',
+        autoClose: 3000,
+      });
+      return;
+    }
     const loginUserRes = await loginUser(formData.email, formData.password); // login user using context
     // if login failed, show error toast
     if (!loginUserRes.isSucessful) {
@@ -54,7 +61,7 @@ function Login() {
             </li>
             <li>
               <div className="login-btns">
-                <button onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
+                <button type="button" onClick={() => navigate('/forgot-password')}>Forgot Password?</button>
                 <button type="submit">Login</button>
               </div>
             </li>

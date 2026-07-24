@@ -56,7 +56,7 @@ function ArtComments({ artId }: ArtCommentsProps) {
                 <ul>
                     {artComments?.map((artComment, idx) => (
                         <li key={idx}>
-                            <strong>{artComment.username}</strong> <em>{new Date(artComment.createdAt).toLocaleString()}</em>
+                            <strong>{artComment.username}</strong> <em>{artComment.createdAt.toLocaleDateString()}</em>
                             <br />
                             <p>{artComment.comment}</p>
                         </li>
@@ -69,7 +69,12 @@ function ArtComments({ artId }: ArtCommentsProps) {
                 <ul>
                     {artComments?.map((artComment, idx) => (
                         <li key={idx}>
-                            <strong>{artComment.username}</strong> <em>{new Date(artComment.createdAt).toLocaleString()}</em>
+                            <strong>{artComment.username}</strong> <em>{new Date(artComment.createdAt).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: '2-digit',
+                                    year: 'numeric',
+                                })}
+                                </em>
                             <br />
                             <p>{artComment.comment}</p>
                         </li>
