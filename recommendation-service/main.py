@@ -67,7 +67,7 @@ def get_similar_artworks(
         cursor.execute("""
             SELECT embedding
             FROM embedded_arts
-            WHERE id = UNHEX(REPLACE(%s, '-', ''))
+            WHERE id = UNHEX(%s)
         """, (art_id,))
 
         target = cursor.fetchone()

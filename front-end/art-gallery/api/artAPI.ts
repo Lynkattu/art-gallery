@@ -298,9 +298,9 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
     }
   }
 
-  async function fetchRandomArtsFromUser(username: string, count: number): Promise<PostArtResult<ArtPath[]>> {
+  async function fetchRandomArtsFromUser(username: string, current_art: String | null, count: number): Promise<PostArtResult<ArtPath[]>> {
     try {
-      const res: Response = await fetch(`${serverURL}arts/random/user/${username}/${count}`);
+      const res: Response = await fetch(`${serverURL}arts/random/user/${username}/${count}/${current_art ? current_art : ""}`);
       const data = await res.json();
 
       if (!res.ok) {
@@ -313,8 +313,8 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
         description: art.description,
         imageUrl: `${serverURL}images/${art.filePath}`,
         tags: art.tags,
-        createdAt: art.createdAt,
-        artist: art.username
+        createdAt: art.created_at,
+        artist: art.artist
       }));
 
       console.log("random arts from user: ", arts);

@@ -31,6 +31,21 @@
     border-radius: 16px;
 }
 
+.art .content .info{
+    width: 100%;
+    text-align: left;
+}
+
+.art .content .info div:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.art .content .info div:first-child p {
+    font-size: 0.75em;
+}
+
 .art .recommendations {
     flex: 1;
     display: flex;

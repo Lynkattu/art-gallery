@@ -34,7 +34,7 @@ function RandomImages({ imageCount, artPaths }: Props) {
         <ul>
             {imagePaths.map((result) => (
                 <li className="searched-art-card" key={result.id} onClick={() => {
-                    navigate(`/art/${result.id}`, { state: { art: result } });
+                    navigate(`/art/${result.id}`);
                 }}>
                     <p>{result.title}</p>
                     <img src={result.imageUrl} alt={result.title!} />

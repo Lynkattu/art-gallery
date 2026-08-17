@@ -1,19 +1,27 @@
 import { useEffect, useState, type JSX } from "react";
 import "./art.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import Topbar from "../components/topbar/topbar";
 import { fetchArtById, fetchRandomArtsFromUser, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
 import ShowArtDetails from "../components/showArtDetails/showArtDetails";
 import ArtComments from "../components/ArtComments/ArtComments";
 import RandomImages from "../components/randomImages/randomImages";
+import moment from "moment";
 
 
 
 function Art() {
     const location = useLocation();
-    const { art } = location.state || {};
-    const [artState, setArtState] = useState<ArtPath | null>(null);
+    const { id } = useParams();
+
+    const [artState, setArtState] = useState<ArtPath>({id: null,
+                title: null,
+                description: null,
+                artist: null,
+                createdAt: null,
+                imageUrl: undefined,
+                tags: null,});
     const [similarArts, setSimilarArts] = useState<ArtPath[]>([]);
     const [randomArtsFromUser, setRandomArtsFromUser] = useState<ArtPath[]>([]);
 
@@ -37,8 +45,8 @@ function Art() {
     }
 
     // Fetch random arts from the same artist
-    async function getRandomArtsFromUser(username: string, count: number) {
-        const data: PostArtResult<ArtPath[]> = await fetchRandomArtsFromUser(username, count);
+    async function getRandomArtsFromUser(username: string, current_art: String | null, count: number) {
+        const data: PostArtResult<ArtPath[]> = await fetchRandomArtsFromUser(username, current_art, count);
         if (data.success) {
             // Handle the random arts from user data as needed
             setRandomArtsFromUser(data.data);
@@ -47,37 +55,26 @@ function Art() {
 
     // main art useEffect, check if art is in location state, if not fetch from URL
     useEffect(() => {
-        if (art && Object.keys(art).length > 0) {
-            console.log("Using art from location state: ", art);
-            const data: ArtPath = {
-                id: art.id,
-                title: art.title,
-                description: art.description,
-                artist: art.artist,
-                createdAt: art.createdAt,
-                imageUrl: art.imageUrl,
-                tags: art.tags,
-            };
-            setArtState(data);
-        } else {
-            console.log("No art in location state, fetching from URL...");
-            fetchArtFromUrl();
-        }
-    }, [location.state?.art]);
+
+        if (!id) return;
+
+        fetchArtFromUrl();
+
+    }, [id]/* [location.state?.art] */);
 
     // Fetch similar arts
     useEffect(() => {
         if (artState && artState.id) {
             getSimilarArts(artState.id)
         }
-    }, [artState]);
+    }, [artState.id]);
 
     // Fetch random arts from the same artist
     useEffect(() => {
         if (artState && artState.artist) {
-            getRandomArtsFromUser(artState.artist, 10);
+            getRandomArtsFromUser(artState.artist, artState.id, 10);
         }
-    }, [artState]);
+    }, [artState.id]);
 
     const artPage: JSX.Element = (
         <div className="art-page">
@@ -86,8 +83,16 @@ function Art() {
             <div className="content">
                 <h4>{artState?.title}</h4>
                 <img src={artState?.imageUrl} alt={artState?.title || ""} />
-                <ShowArtDetails art={artState ? artState : art} />
-                <p>{artState?.description}</p>
+                <div className="info">
+                    <div>
+                        <p>by {artState?.artist}</p>
+                        <p>Published: {moment(artState?.createdAt).format("DD-MM-YYYY")}</p>
+                    </div>
+
+                    {/* <ShowArtDetails art={artState ? artState : art} /> */}
+                    <p>{artState?.description}</p>
+                </div>
+
 
             </div>
             {/*right divided horizantally to half*/}
@@ -113,7 +118,11 @@ function Art() {
             </div>
             
             {/*bottom*/}
-            <ArtComments artId={artState?.id || ""} />
+            {artState?.id ? (
+                <ArtComments artId={artState.id} />
+            ) : (
+                <p>No art selected</p>
+            )}
 
         </div>
     );

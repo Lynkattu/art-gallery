@@ -803,22 +803,42 @@ export default function(app, upload) {
      *        500:
      *          description: Internal server error
      */
-    app.get('/arts/random/user/:userName/:count', async (req, res) => {
+    app.get('/arts/random/user/:userName/:count/:current_art_id', async (req, res) => {
         const userName = req.params.userName;
         const count = parseInt(req.params.count);
-        console.log("Fetching random art for user:", userName);
+        const current_art_id = req.params.current_art_id;
+        console.log("Fetching random art from user:", userName);
 
         try {
             const [rows] = await pool.query(
             `
-            SELECT *
-            FROM Arts
-            JOIN Users u ON Arts.user_id = u.id
+            SELECT
+                HEX(a.id) as id,
+                a.title,
+                a.filePath,
+                a.description,
+                u.username as artist,
+                a.created_at,
+                GROUP_CONCAT(t.name ORDER BY t.name SEPARATOR ', ') AS tags
+            FROM arts a
+            JOIN users u ON a.user_id = u.id
+            LEFT JOIN art_tags at
+                ON a.id = at.art_id
+            LEFT JOIN tags t
+                ON at.tag_id = t.id
             WHERE u.username = ?
+            AND a.id <> UNHEX(?)
+            GROUP BY
+                a.id,
+                a.title,
+                a.filePath,
+                a.description,
+                u.username,
+                a.created_at
             ORDER BY RAND()
             LIMIT ?;
             `
-            , [userName, count]);
+            , [userName, current_art_id, count]);
 
             if (!rows || rows.length === 0) {
                 return res.status(404).json({ message: "No art found for the specified user" });

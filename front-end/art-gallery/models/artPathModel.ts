@@ -4,6 +4,6 @@ export interface ArtPath {
   description: string | null;
   artist: string | null;
   createdAt: string | null;
-  imageUrl: string;
+  imageUrl: string | undefined;
   tags: string[] | null;
 }
