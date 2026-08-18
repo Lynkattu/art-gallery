@@ -53,10 +53,10 @@ async def create_embedding(art_id: str, request: EmbeddingRequest):
     return {"message": "Embedding created successfully"}
 
 ### get similar artworks based on the embedding of the provided artwork ID. 
-@app.get("/recommendations/{art_id}")
+@app.get("/recommendations/{art_id}/{limit}")
 def get_similar_artworks(
     art_id: str,
-    limit: int = 10
+    limit: int
 ):
 
     conn = get_connection()

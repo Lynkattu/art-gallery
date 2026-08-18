@@ -8,12 +8,14 @@ import { useNavigate } from "react-router-dom";
 type Props = {
     imageCount?: number;
     artPaths?: ArtPath[];
+    gridTemplateColumns?: string;
 };
 
-function RandomImages({ imageCount, artPaths }: Props) {
+function RandomImages({ imageCount, artPaths, gridTemplateColumns }: Props) {
     const navigate = useNavigate();
 
     const [imagePaths, setImagePaths] = useState<ArtPath[]>([]);
+    const [gridColumns, setGridColumns] = useState<string>(gridTemplateColumns || "1fr 1fr 1fr 1fr 1fr 1fr");
 
     useEffect(() => {
         if (!artPaths || artPaths.length <= 0) {
@@ -29,6 +31,18 @@ function RandomImages({ imageCount, artPaths }: Props) {
     }
 
     }, [imageCount, artPaths]);
+
+    // Update grid columns if gridTemplateColumns prop changes
+    useEffect(() => {
+        if (gridTemplateColumns) {
+            setGridColumns(gridTemplateColumns);
+        }
+    }, [gridTemplateColumns]);
+    
+    // Update CSS variable for grid columns whenever gridColumns state changes
+    useEffect(() => {
+        document.documentElement.style.setProperty('--grid-columns', gridColumns);
+    }, [gridColumns]);
 
     return <div className='searched-art'>
         <ul>

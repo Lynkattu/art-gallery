@@ -8,7 +8,7 @@
 
 .searched-art ul {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18%, 1fr));
+    grid-template-columns: var(--grid-columns);
     list-style-type: none;
     padding: 0;
     margin: 0;
@@ -24,7 +24,6 @@
     overflow: hidden;
     justify-content: left;
     border-radius: 12px;
-
 }
 
 .searched-art-card > img {

@@ -25,7 +25,9 @@ function Art() {
     const [similarArts, setSimilarArts] = useState<ArtPath[]>([]);
     const [randomArtsFromUser, setRandomArtsFromUser] = useState<ArtPath[]>([]);
 
-    // Fetch art from URL if not in location state
+    const imageCount = 12; // Number of random arts to fetch and display
+
+    // Fetch art from URL
     async function fetchArtFromUrl() {
         const data = await fetchArtById(location.pathname.split("/").pop() || "")
         if (!data) {
@@ -38,7 +40,7 @@ function Art() {
 
     // Fetch similar arts
     async function getSimilarArts(artId: string) {
-        const data: PostArtResult<ArtPath[]> = await fetchSimilarArts(artId);
+        const data: PostArtResult<ArtPath[]> = await fetchSimilarArts(artId, imageCount);
         if (data.success) {
             setSimilarArts(data.data);
         }
@@ -72,7 +74,7 @@ function Art() {
     // Fetch random arts from the same artist
     useEffect(() => {
         if (artState && artState.artist) {
-            getRandomArtsFromUser(artState.artist, artState.id, 10);
+            getRandomArtsFromUser(artState.artist, artState.id, imageCount);
         }
     }, [artState.id]);
 
@@ -104,7 +106,7 @@ function Art() {
                 <div className="recommended-art">
                     <h5>Recommended</h5>
                     {similarArts.length > 0 ? (
-                        <RandomImages artPaths={similarArts} imageCount={10} />
+                        <RandomImages artPaths={similarArts} imageCount={imageCount} gridTemplateColumns="1fr 1fr 1fr 1fr" />
                     ) : (
                         <p>No similar arts found.</p>
                     )}
@@ -113,7 +115,7 @@ function Art() {
                     <h5>More from {artState?.artist}</h5>
 
                     {randomArtsFromUser.length > 0 ? (
-                        <RandomImages artPaths={randomArtsFromUser} imageCount={10} />
+                        <RandomImages artPaths={randomArtsFromUser} imageCount={imageCount} gridTemplateColumns="1fr 1fr 1fr 1fr" />
                     ) : (
                         <p>No arts from this artist found.</p>
                     )}

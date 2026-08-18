@@ -270,9 +270,9 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   }
   
   // fetch similar arts from ML server
-  async function fetchSimilarArts(artId: string) : Promise<PostArtResult<ArtPath[]>> {
+  async function fetchSimilarArts(artId: string, limit: number) : Promise<PostArtResult<ArtPath[]>> {
     try {
-      const res: Response = await fetch(`${mlServerURL}recommendations/${artId}`, {
+      const res: Response = await fetch(`${mlServerURL}recommendations/${artId}/${limit}`, {
         method: "GET",
       });
       const data = await res.json();
