@@ -9,6 +9,28 @@
     border-radius: 16px;
 }
 
+.home .home-header {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.home .home-header h1 {
+    font-size: 2rem;
+    font-family: cursive;
+    margin: 0;
+    color: var(--header-color);
+}
+
+.home .home-header > img {
+    width: 80px;
+    height: auto;
+    margin: 0;
+    display: block;
+}
+
 .home .search {
     display: flex;
     gap: 1em;

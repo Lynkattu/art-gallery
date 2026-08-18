@@ -25,6 +25,13 @@
     padding: 16px;
     width: 50%;
 }
+
+.art .content h4 {
+    font-family: cursive;
+    margin-bottom: 5px;
+    font-size: 1.25em;
+}
+
 .art .content img {
     max-width: 100%;
     height: auto;
@@ -54,4 +61,14 @@
     gap: 20px;
     padding: 16px;
     width: 50%;
+}
+
+.art .recommendations h5 {
+    margin: 0 0 5px 0;
+    font-size: 1.25em;
+    color: var(--header-color);
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    padding: 0.2em;
 }

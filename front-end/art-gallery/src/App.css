@@ -12,6 +12,7 @@ body,html {
     --secondary-color: #0B223A;
     --secondary-color-hover: #023e8a;
     --background-color: rgba(0, 0, 0, 0.3);
+    --header-color: #acf;
 }
 
 #root {

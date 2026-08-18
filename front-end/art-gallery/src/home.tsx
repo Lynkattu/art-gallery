@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify/unstyled";
 import type { ArtPath } from '../models/artPathModel';
 import { useSearchParams } from 'react-router-dom';
 import { fetchArtBySearch } from '../api/artAPI';
+import Logo from './assets/ArtGalleryLogo1.png'
 
 function Home() {
   const [searchParams] = useSearchParams();
@@ -38,12 +39,15 @@ function Home() {
   return (
       <div className="home">
       <Topbar />
+      <div className="home-header">
+        <img src={Logo} alt="Art Gallery Logo"/>
         <h1>Art Gallery</h1>
-        <div className='search'>
-          <SearchBar type={selectedValue} setSearchResults={setSearchResults} />
-          <Radiobutton
-            onSelect={setSelectedValue} 
-            items={items} 
+      </div>
+      <div className='search'>
+        <SearchBar type={selectedValue} setSearchResults={setSearchResults} />
+        <Radiobutton
+          onSelect={setSelectedValue} 
+          items={items} 
             defaultItem={selectedValue ? selectedValue : items[0].title}
           />
         </div>

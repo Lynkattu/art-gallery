@@ -1,6 +1,6 @@
 import { useEffect, useState, type JSX } from "react";
 import "./art.css";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import Topbar from "../components/topbar/topbar";
 import { fetchArtById, fetchRandomArtsFromUser, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
@@ -8,11 +8,11 @@ import ShowArtDetails from "../components/showArtDetails/showArtDetails";
 import ArtComments from "../components/ArtComments/ArtComments";
 import RandomImages from "../components/randomImages/randomImages";
 import moment from "moment";
+import LineBreak from "../components/lineBreak/lineBreak";
 
 
 
 function Art() {
-    const location = useLocation();
     const { id } = useParams();
 
     const [artState, setArtState] = useState<ArtPath>({id: null,
@@ -88,17 +88,21 @@ function Art() {
                         <p>by {artState?.artist}</p>
                         <p>Published: {moment(artState?.createdAt).format("DD-MM-YYYY")}</p>
                     </div>
-
                     {/* <ShowArtDetails art={artState ? artState : art} /> */}
                     <p>{artState?.description}</p>
                 </div>
 
+                <LineBreak />
+
+                {artState?.id && (
+                    <ArtComments artId={artState.id} />
+                )}
 
             </div>
             {/*right divided horizantally to half*/}
             <div className="recommendations" >
                 <div className="recommended-art">
-                    <h5>Recommended Art</h5>
+                    <h5>Recommended</h5>
                     {similarArts.length > 0 ? (
                         <RandomImages artPaths={similarArts} imageCount={10} />
                     ) : (
@@ -106,7 +110,7 @@ function Art() {
                     )}
                 </div>
                 <div className="artist-art">
-                    <h5>More from this Artist</h5>
+                    <h5>More from {artState?.artist}</h5>
 
                     {randomArtsFromUser.length > 0 ? (
                         <RandomImages artPaths={randomArtsFromUser} imageCount={10} />
@@ -117,12 +121,7 @@ function Art() {
             </div>
             </div>
             
-            {/*bottom*/}
-            {artState?.id ? (
-                <ArtComments artId={artState.id} />
-            ) : (
-                <p>No art selected</p>
-            )}
+
 
         </div>
     );
