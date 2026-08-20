@@ -50,14 +50,16 @@ function ArtComments({ artId }: ArtCommentsProps) {
             <div className="art-comments">
                 <h5>Comments</h5>
                 <form onSubmit={handleCommentSubmit}>
-                    <textarea name="comment" placeholder="Write your comment here..." required></textarea>
+                    <textarea name="comment" maxLength={10000} placeholder="Write your comment here..." required></textarea>
                     <button type="submit">Post Comment</button>
                 </form>
                 <ul>
                     {artComments?.map((artComment, idx) => (
                         <li key={idx}>
-                            <strong>{artComment.username}</strong> <em>{artComment.createdAt.toLocaleDateString()}</em>
-                            <br />
+                            <div className="comment-header">
+                                <strong>@{artComment.username}</strong>
+                                <em>{artComment.createdAt.toLocaleDateString()}</em>
+                            </div> 
                             <p>{artComment.comment}</p>
                         </li>
                     ))}
@@ -69,13 +71,10 @@ function ArtComments({ artId }: ArtCommentsProps) {
                 <ul>
                     {artComments?.map((artComment, idx) => (
                         <li key={idx}>
-                            <strong>{artComment.username}</strong> <em>{new Date(artComment.createdAt).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: '2-digit',
-                                    year: 'numeric',
-                                })}
-                                </em>
-                            <br />
+                            <div className="comment-header">
+                                <strong>@{artComment.username}</strong>
+                                <em>{artComment.createdAt.toLocaleDateString()}</em>
+                            </div> 
                             <p>{artComment.comment}</p>
                         </li>
                     ))}

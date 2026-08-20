@@ -60,7 +60,7 @@
     align-items: center;
     gap: 20px;
     padding: 16px;
-    width: 50%;
+    width: 100%;
 }
 
 .art .recommendations h5 {
@@ -71,4 +71,8 @@
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 10px;
     padding: 0.2em;
+}
+
+.art .recommendations .recommended-art {
+    width: 100%;
 }
