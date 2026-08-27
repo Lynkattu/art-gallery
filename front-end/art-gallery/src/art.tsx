@@ -11,7 +11,6 @@ import moment from "moment";
 import LineBreak from "../components/lineBreak/lineBreak";
 
 
-
 function Art() {
     const { id } = useParams();
 
@@ -24,8 +23,19 @@ function Art() {
                 tags: null,});
     const [similarArts, setSimilarArts] = useState<ArtPath[]>([]);
     const [randomArtsFromUser, setRandomArtsFromUser] = useState<ArtPath[]>([]);
+    const [imageCount, setImageCount] = useState<number>(12); // Number of random arts to fetch and display
+    const [dimensions, setDimensions] = useState({
+        width: window.innerWidth,
+    });
+    let isWideScreen = window.matchMedia("(width >= 900px)");
+    const [gridTemplateColumns, setGridTemplateColumns] = useState(isWideScreen.matches ? "1fr 1fr 1fr 1fr" : "1fr 1fr");
 
-    const imageCount = 12; // Number of random arts to fetch and display
+    // Handle window resize
+    function handleResize() {
+        setDimensions({
+            width: window.innerWidth,
+        });
+    }
 
     // Fetch art from URL
     async function fetchArtFromUrl() {
@@ -55,11 +65,31 @@ function Art() {
         }
     }
 
+    // Add event listener for window resize
+    useEffect(() => {
+        window.addEventListener("resize", handleResize, false);
+    }, []);
+
+    // Update UI When screen width changes
+    useEffect(() => {
+        if (window.matchMedia("(width < 900px)").matches) {
+            setImageCount(6);
+            setGridTemplateColumns("1fr 1fr");
+        } else if (window.matchMedia("(width < 1400px)").matches) {
+            setImageCount(9);
+            setGridTemplateColumns("1fr 1fr 1fr");
+        } else {
+            setImageCount(12);
+            setGridTemplateColumns("1fr 1fr 1fr 1fr");
+        }
+        console.log("Screen width changed, new image count: ", gridTemplateColumns, imageCount);
+    }, [dimensions.width]);
+
     // main art useEffect, check if art is in location state, if not fetch from URL
     useEffect(() => {
 
         if (!id) return;
-
+        console.log(isWideScreen.matches);
         fetchArtFromUrl();
 
     }, [id]/* [location.state?.art] */);
@@ -94,10 +124,11 @@ function Art() {
                     <p>{artState?.description}</p>
                 </div>
 
-                <LineBreak />
-
+                {isWideScreen.matches ? (<LineBreak />) : null}
                 {artState?.id && (
-                    <ArtComments artId={artState.id} />
+                    isWideScreen.matches ? (
+                        <ArtComments artId={artState.id} />
+                    ) : (null)
                 )}
 
             </div>
@@ -106,7 +137,7 @@ function Art() {
                 <div className="recommended-art">
                     <h5>Recommended</h5>
                     {similarArts.length > 0 ? (
-                        <RandomImages artPaths={similarArts} imageCount={imageCount} gridTemplateColumns="1fr 1fr 1fr 1fr" />
+                        <RandomImages artPaths={similarArts} imageCount={imageCount} gridTemplateColumns={gridTemplateColumns} />
                     ) : (
                         <p>No similar arts found.</p>
                     )}
@@ -115,11 +146,19 @@ function Art() {
                     <h5>More from {artState?.artist}</h5>
 
                     {randomArtsFromUser.length > 0 ? (
-                        <RandomImages artPaths={randomArtsFromUser} imageCount={imageCount} gridTemplateColumns="1fr 1fr 1fr 1fr" />
+                        <RandomImages artPaths={randomArtsFromUser} imageCount={imageCount} gridTemplateColumns={gridTemplateColumns} />
                     ) : (
                         <p>No arts from this artist found.</p>
                     )}
                 </div>
+
+                {/* Show comments at the bottom if the screen is narrow */}
+                {!isWideScreen.matches ? (<LineBreak />) : null}
+                {artState?.id && (
+                    !isWideScreen.matches ? (
+                        <ArtComments artId={artState.id} />
+                    ) : (null)
+                )}            
             </div>
             </div>
             

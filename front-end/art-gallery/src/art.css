@@ -76,3 +76,18 @@
 .art .recommendations .recommended-art {
     width: 100%;
 }
+
+@media (max-width: 900px) {
+    .art {
+        flex-direction: column;
+    }
+
+    .art .content {
+        flex: 1;
+    }
+
+    .art .recommendations {
+        flex: 1;
+        width: 100%;
+    }
+}

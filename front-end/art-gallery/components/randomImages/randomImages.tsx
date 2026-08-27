@@ -15,38 +15,34 @@ function RandomImages({ imageCount, artPaths, gridTemplateColumns }: Props) {
     const navigate = useNavigate();
 
     const [imagePaths, setImagePaths] = useState<ArtPath[]>([]);
-    const [gridColumns, setGridColumns] = useState<string>(gridTemplateColumns || "1fr 1fr 1fr 1fr 1fr 1fr");
+    const gridColumns = gridTemplateColumns || "1fr 1fr 1fr 1fr 1fr 1fr";
+    const effectiveImageCount = imageCount || 12; // Default to 12 if not provided
 
+    const loadImages = async () => {
+        const paths = await fetchRandomArtPaths(effectiveImageCount || 0);
+        setImagePaths(paths);
+        console.log(paths);
+    };
+    
     useEffect(() => {
         if (!artPaths || artPaths.length <= 0) {
-        const loadImages = async () => {
-            const paths = await fetchRandomArtPaths(imageCount || 0);
-            setImagePaths(paths);
-            console.log(paths);
-        };
-
-        loadImages();
-    } else {
-        setImagePaths(artPaths);
-    }
-
-    }, [imageCount, artPaths]);
-
-    // Update grid columns if gridTemplateColumns prop changes
-    useEffect(() => {
-        if (gridTemplateColumns) {
-            setGridColumns(gridTemplateColumns);
+            loadImages();
+        } 
+        else if (effectiveImageCount != undefined) {
+            setImagePaths(artPaths);
         }
-    }, [gridTemplateColumns]);
-    
-    // Update CSS variable for grid columns whenever gridColumns state changes
+
+
+    }, [effectiveImageCount, artPaths]);
+
+
     useEffect(() => {
         document.documentElement.style.setProperty('--grid-columns', gridColumns);
     }, [gridColumns]);
 
     return <div className='searched-art'>
         <ul>
-            {imagePaths.map((result) => (
+            {imagePaths.slice(0, effectiveImageCount).map((result) => (
                 <li className="searched-art-card" key={result.id} onClick={() => {
                     navigate(`/art/${result.id}`);
                 }}>
