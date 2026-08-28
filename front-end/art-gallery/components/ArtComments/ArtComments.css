@@ -4,7 +4,8 @@
 
 .art-comments h5 {
     font-size: 1.1rem;
-    margin: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
 }
 
 .art-comments form {

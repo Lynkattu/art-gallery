@@ -118,10 +118,26 @@ export default function(app, upload) {
             console.log("Fetching art with ID:", artId);
 
             const [rows] = await pool.query(
-                `SELECT a.*, u.username
+                `SELECT 
+                    a.title,
+                    a.description,
+                    a.filePath,
+                    a.created_at,
+                    HEX(a.id) AS id,
+                    u.username,
+                    GROUP_CONCAT(t.name) AS tags
                 FROM arts a
                 JOIN users u ON a.user_id = u.id
-                WHERE a.id = UNHEX(?)`,
+                LEFT JOIN art_tags at ON a.id = at.art_id
+                LEFT JOIN tags t ON at.tag_id = t.id
+                WHERE a.id = UNHEX(?)
+                GROUP BY 
+                    a.id, 
+                    a.title, 
+                    a.description, 
+                    a.filePath, 
+                    a.created_at, 
+                    u.username`,
                 [artId]
             );
 
@@ -136,6 +152,7 @@ export default function(app, upload) {
                 description: art.description,
                 artist: art.username,
                 createdAt: art.created_at,
+                tags: art.tags ? art.tags.split(',') : [],
                 imageUrl: `http://localhost:5000/images/${art.filePath}`
             };
 

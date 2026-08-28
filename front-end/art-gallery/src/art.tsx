@@ -4,11 +4,11 @@ import { useParams } from "react-router-dom";
 import Topbar from "../components/topbar/topbar";
 import { fetchArtById, fetchRandomArtsFromUser, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
-import ShowArtDetails from "../components/showArtDetails/showArtDetails";
 import ArtComments from "../components/ArtComments/ArtComments";
 import RandomImages from "../components/randomImages/randomImages";
 import moment from "moment";
 import LineBreak from "../components/lineBreak/lineBreak";
+import TagcardCollection from "../components/tagcardCollection/TagcardCollection";
 
 
 function Art() {
@@ -89,7 +89,6 @@ function Art() {
     useEffect(() => {
 
         if (!id) return;
-        console.log(isWideScreen.matches);
         fetchArtFromUrl();
 
     }, [id]/* [location.state?.art] */);
@@ -120,9 +119,10 @@ function Art() {
                         <p>by {artState?.artist}</p>
                         <p>Published: {moment(artState?.createdAt).format("DD-MM-YYYY")}</p>
                     </div>
-                    {/* <ShowArtDetails art={artState ? artState : art} /> */}
                     <p>{artState?.description}</p>
                 </div>
+
+                <TagcardCollection tags={artState?.tags || []} />
 
                 {isWideScreen.matches ? (<LineBreak />) : null}
                 {artState?.id && (

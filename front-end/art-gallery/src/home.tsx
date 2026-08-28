@@ -17,7 +17,7 @@ function Home() {
   const search = searchParams.get("search");
    
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
-  const [imageCount] = useState<number>(20);
+  const [imageCount] = useState<number>(30); // Number of random arts to fetch and display
   const [searchResults, setSearchResults] = useState<ArtPath[]>([]);
   const items = [{title: "Art"}, {title: "Artist"}];
 
