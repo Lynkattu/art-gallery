@@ -170,6 +170,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   async function updateArt (art: Art): Promise<PostArtResult<any>> {
     console.log("updating art: ",art.id)
     try {
+      // Send a PUT request to the backend API to update the art
       const res: Response = await fetch(`${serverURL}arts/${art.id}`, {
         method: 'PUT',
         credentials: "include",
@@ -182,9 +183,12 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
           tags: art.tags
         })
       });
-      const data = await res.json();
       
+      // Check if the response is ok (status code 200-299)
       if (!res.ok) return {success: false, error: `Failed to update art`}
+
+      // Parse the response as JSON
+      const data = await res.json();
 
       return {success: true, data}
 
@@ -197,6 +201,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   // delete art
   async function deleteArt (id: string): Promise<PostArtResult<any>> {
     try {
+      // Send a DELETE request to the backend API to delete the art
       const res: Response = await fetch(`${serverURL}arts/${id}`, {
         method: 'DELETE',
         credentials: "include",
@@ -205,7 +210,9 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
         },
       });      
 
+      // Check if the response is ok (status code 200-299)
       if(!res.ok) return {success: false, error: `Failed to delete art: status ${res.status}`}
+
       const data = await res.json()
 
       return {success: true, data}
@@ -219,7 +226,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   async function postComment(artId: string, userId: string, comment: string ) {
     console.log(`Posting comment for art ${artId} by user ${userId}: ${comment}`);
     try {
-
+      // Post the comment to the backend API
       const res: Response = await fetch(`${serverURL}arts/${artId}/comments`, {
         method: "POST",
         credentials: "include",
@@ -233,6 +240,7 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
       });
       const data = await res.json();
 
+      // Check if the response is ok (status code 200-299)
       if (!res.ok) {
         return { success: false, error: JSON.stringify(data) };
       }
@@ -272,16 +280,21 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
   // fetch similar arts from ML server
   async function fetchSimilarArts(artId: string, limit: number) : Promise<PostArtResult<ArtPath[]>> {
     try {
+      // Fetch similar arts from the ML server
       const res: Response = await fetch(`${mlServerURL}recommendations/${artId}/${limit}`, {
         method: "GET",
       });
+
+      // Parse the response as JSON
       const data = await res.json();
-            console.log("Fetched similar arts: ", data);
+      console.log("Fetched similar arts: ", data);
 
-
+      // Check if the response is ok (status code 200-299)
       if (!res.ok) {
         return {success: false, error: JSON.stringify(data)};
       }
+
+      // Map the fetched data to ArtPath objects
       const arts: ArtPath[] = data.map((art: any) => ({
         id: art.id ? art.id : null,
         title: art.title ? art.title : null,
@@ -300,13 +313,16 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
 
   async function fetchRandomArtsFromUser(username: string, current_art: String | null, count: number): Promise<PostArtResult<ArtPath[]>> {
     try {
+      // Fetch random arts from the same user from the backend API
       const res: Response = await fetch(`${serverURL}arts/random/user/${username}/${count}/${current_art ? current_art : ""}`);
       const data = await res.json();
 
+      // Check if the response is ok (status code 200-299)
       if (!res.ok) {
         return {success: false, error: JSON.stringify(data)};
       }
 
+      // Map the fetched data to ArtPath objects
       const arts: ArtPath[] = data.arts.map((art: any) => ({
         id: art.id,
         title: art.title,
@@ -327,9 +343,44 @@ import type { Art, ArtsResponse } from '../models/artModel.ts';
     }
   }
 
+  async function downloadImage(filename: string): Promise<PostArtResult<String>> {
+    try {
+      // Fetch the image from the server
+      const res = await fetch(`${serverURL}images/${filename}`, {
+        method: 'GET',
+      });
+
+      // Check if the response is ok (status code 200-299)
+      if (!res.ok) {
+        return {success: false, error: "Failed to download image"};
+      }
+
+      const blob = await res.blob(); // Convert the response to binary large object (blob)
+      
+      // Create a temporary URL for the blob and trigger a download
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+
+      // Set the download attribute with the filename
+      a.href = url;
+      a.download = `${filename}`;
+      document.body.appendChild(a);
+      a.click();
+
+      // Clean up the temporary URL and remove the anchor element
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      return {success: true, data: "Image downloaded successfully"};
+
+    } catch (error) {
+      console.error("Error downloading image:", error);
+      return {success: false, error: "Failed to download image"};
+    }
+  }
 
 export {
   fetchAllArt, fetchRandomArtPaths, postNewArt, fetchArtByUser, updateArt, deleteArt, fetchArtBySearch, fetchArtById,
-  postComment, fetchArtComments, fetchSimilarArts, fetchRandomArtsFromUser
+  postComment, fetchArtComments, fetchSimilarArts, fetchRandomArtsFromUser, downloadImage
 };
 export type { PostArtResult };

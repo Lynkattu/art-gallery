@@ -9,6 +9,7 @@ import RandomImages from "../components/randomImages/randomImages";
 import moment from "moment";
 import LineBreak from "../components/lineBreak/lineBreak";
 import TagcardCollection from "../components/tagcardCollection/TagcardCollection";
+import DownloadBt from "../components/downloadBt/downloadBt";
 
 
 function Art() {
@@ -117,7 +118,10 @@ function Art() {
                 <div className="info">
                     <div>
                         <p>by {artState?.artist}</p>
-                        <p>Published: {moment(artState?.createdAt).format("DD-MM-YYYY")}</p>
+                        <div>
+                            <p>Published: {moment(artState?.createdAt).format("DD-MM-YYYY")}</p>
+                            {artState && artState.imageUrl && <DownloadBt filename={artState?.imageUrl.split('/').pop() || ""} />}
+                        </div>
                     </div>
                     <p>{artState?.description}</p>
                 </div>

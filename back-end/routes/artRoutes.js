@@ -400,8 +400,32 @@ export default function(app, upload) {
 
     // Download image endpoint
     // filename => filename in image directory
+    /** 
+     * @swagger
+     * /arts/download/{filename}:
+     *   get:
+     *     tags: [Arts]
+     *     summary: Download an art image by filename
+     *     parameters:
+     *       - in: path
+     *         name: filename
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The filename of the art image to download
+     *     responses:
+     *       200:
+     *         description: The requested art image file
+     *       404:
+     *         description: File not found
+     */
     app.get('/arts/download/:filename', async (req, res) => {
-        res.download(`images/${req.params.filename}`);
+        try {
+            res.download(`images/${req.params.filename}`);
+        } catch (err) {
+        console.error("Error downloading file:", err);
+        res.status(404).json({ message: "File not found" });
+        }
     }); 
 
     // update existing art

@@ -11,12 +11,28 @@ import swaggerJsdoc from 'swagger-jsdoc';
 dotenv.config();
 
 const app = express();
+// Enable CORS for requests from the front-end
+app.use((req, res, next) => {
+  console.log("REQUEST:", {
+    method: req.method,
+    url: req.originalUrl,
+    origin: req.headers.origin,
+  });
+  next();
+});
 
-app.use(cookieParser());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
+
+
+app.use(cookieParser()); // Use cookie-parser middleware to parse cookies
 app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use("/images", express.static("images")); // Serve static files from images directory
 app.use("/site_images", express.static("site_images")); // Serve static files from site_images directory
-// Enable CORS for requests from the front-end
+
+
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true
