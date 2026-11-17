@@ -316,18 +316,24 @@ export default function(app, upload) {
      *         description: Internal server error
      */
     app.post("/arts", upload.single("uploaded_file"), authentication, async (req, res) => {
+        let connection;
         try {
             if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
             // Validate required fields
             const { title, description, user_id } = req.body;
             if (!title || !description || !user_id) {
                 await fs.unlink(path.join(rootPath, `images/${req.file.filename}`)); // delete the uploaded file
                 return res.status(400).json({ error: "Title, description, and user_id are required" });
             }
+
+            connection = await pool.getConnection();
+            connection.beginTransaction();
+
             // generate a UUID for the art ID
             const id = uuidv4().replace(/-/g, '');
 
-            await pool.query(
+            await connection.query(
                 "INSERT INTO arts (id, filePath, title, description, user_id) VALUES (UNHEX(?), ?, ?, ?, UNHEX(?))",
                 [id, req.file.filename, title, description, user_id]
             );
@@ -339,11 +345,14 @@ export default function(app, upload) {
             // Check existing tags if provided
             if (req.body.tags) {
                 const tags = JSON.parse(req.body.tags);
+                
                 if (Array.isArray(tags) && tags.length > 0) {
-                    const [rows] = await pool.query(
+
+                    const [rows] = await connection.query(
                         "SELECT HEX(id) as id, name FROM tags WHERE name IN (?)",
                         [tags]
                     );
+
                     tagsId = rows.map(row => row.id);
                     const existing_tags = rows.map(row => row.name);
                     tagsToInsert = tags.filter(tag => !existing_tags.includes(tag));
@@ -355,7 +364,7 @@ export default function(app, upload) {
             if (tagsToInsert.length > 0) {
                 for (const tag of tagsToInsert) {
                     const tagId = uuidv4().replace(/-/g, '');
-                    await pool.query(
+                    await connection.query(
                         "INSERT INTO tags (id, name) VALUES (UNHEX(?), ?)",
                         [tagId, tag]
                     );
@@ -365,6 +374,7 @@ export default function(app, upload) {
 
             // Insert into art_tags
             console.log("Tag IDs for art:", tagsId);
+
             if (tagsId.length > 0) {
                 const placeholders = tagsId
                     .map(() => "(UNHEX(?), UNHEX(?))")
@@ -372,12 +382,13 @@ export default function(app, upload) {
 
                 const values = tagsId.flatMap(tagId => [id, tagId]);
 
-                await pool.query(
+                await connection.query(
                     `INSERT INTO art_tags (art_id, tag_id)
                     VALUES ${placeholders}`,
                     values
                 );
             }
+            
             // create embedding for the uploaded art
             const response = await fetch(`http://localhost:8000/embeddings/${id}`, {
                 method: 'POST',
@@ -391,10 +402,28 @@ export default function(app, upload) {
                 throw new Error(`Failed to generate embedding: ${response.statusText}`);
             }
 
+            const result = await response.json();   
+            
+            const embedding = Buffer.from(new Float32Array(result.embedding).buffer);
+
+            await connection.query(`
+                INSERT INTO embedded_arts (id, embedding) VALUES (UNHEX(?), ?)
+                    ON DUPLICATE KEY UPDATE embedding = VALUES(embedding)
+                `, [id, embedding]);
+
+            await connection.commit();
+
             res.status(201).json({ message: "Art uploaded successfully" });
+
         } catch (err) {
             console.error("DB error inserting art:", err);
+            await connection?.rollback();
             res.status(500).json({ error: "Failed to upload art" });
+
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     });
 

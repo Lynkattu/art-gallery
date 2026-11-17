@@ -39,18 +39,21 @@ class EmbeddingRequest(BaseModel):
 @app.post("/embeddings/{art_id}")
 async def create_embedding(art_id: str, request: EmbeddingRequest):
     # connect to th database
-    conn = get_connection()
+    #conn = get_connection()
     # get the embedding for the provided image
     embedding = get_embedding(f'''{request.file_path}''')
+    return {"message": "Embedding created successfully", "embedding": embedding.tolist()}
 
-    with conn.cursor() as cursor:
-        cursor.execute("""
-            INSERT INTO embedded_arts (id, embedding)
-            VALUES (UNHEX(REPLACE(%s, '-', '')), %s)
-            ON DUPLICATE KEY UPDATE embedding = VALUES(embedding)
-        """, (art_id, embedding.tobytes()))
 
-    return {"message": "Embedding created successfully"}
+###     with conn.cursor() as cursor:
+###        cursor.execute("""
+###            INSERT INTO embedded_arts (id, embedding)
+###            VALUES (UNHEX(REPLACE(%s, '-', '')), %s)
+###            ON DUPLICATE KEY UPDATE embedding = VALUES(embedding)
+###        """
+###        , (art_id, embedding.tobytes()))
+
+###    return {"message": "Embedding created successfully"} """
 
 ### get similar artworks based on the embedding of the provided artwork ID. 
 @app.get("/recommendations/{art_id}/{limit}")
