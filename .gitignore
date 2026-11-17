@@ -16,6 +16,9 @@ dist-ssr
 /back-end/images/*
 !/back-end/images/
 !/back-end/images/.gitkeep
+/back-end/userIcons/*
+!/back-end/userIcons/
+!/back-end/userIcons/.gitkeep
 .vscode/*
 !.vscode/extensions.json
 .idea

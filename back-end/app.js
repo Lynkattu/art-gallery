@@ -68,6 +68,36 @@ const upload = multer({
   }
 });
 
+//-----------Multer for user icon upload and download---------------
+const storage_user_icons = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'userIcons/')
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  }
+})
+
+const upload_user_icons = multer({
+  storage: storage_user_icons,
+  limits: {
+    fileSize: 2 * 1024 * 1024, // 2MB
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error('Invalid file type');
+      error.code = 'INVALID_FILE_TYPE';
+      return cb(error, false);
+    }
+
+    cb(null, true);
+  }
+});
+//-------------------------------------------------------------
+
 // swagger setup
 const options = {
   definition: {
@@ -101,7 +131,7 @@ app.use(
 
 // register routes
 artRoutes(app, upload);
-userRoutes(app);
+userRoutes(app, upload_user_icons);
 
 // start server
 app.listen(process.env.PORT, () => {

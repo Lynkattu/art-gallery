@@ -8,6 +8,18 @@ users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+user_icons (
+    id BINARY(16) PRIMARY KEY,
+    icon VARCHAR(255),
+    user BINARY(16) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+)
+
 password_resets (
     id BINARY(16) PRIMARY KEY,
     user_id BINARY(16) NOT NULL,

@@ -81,4 +81,24 @@ async function resetPassword(token: string, newPassword: string) {
     }
 }
 
-export { getUserProfile, postUserLogin, sendResetLink, resetPassword };
+async function changeUserIcon(userId: string, iconFile: File) {
+    try {
+        const formData = new FormData();
+        formData.append("uploaded_file", iconFile);
+
+        const res = await fetch(`http://localhost:5000/users/${userId}/icon`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "multipart/form-data"
+            },
+            credentials: "include",
+            body: formData
+        });
+        return res;
+    } catch (error) {
+        console.error("Error changing user icon:", error);
+        throw error;
+    }
+}
+
+export { getUserProfile, postUserLogin, sendResetLink, resetPassword, changeUserIcon };

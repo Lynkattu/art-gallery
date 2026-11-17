@@ -5,8 +5,13 @@ import jwt from 'jsonwebtoken';
 import authentication from '../middleware/authentication.js';
 import transporter from '../utils/mailer.js';
 import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
+import { rootPath } from 'get-root-path';
 
-export default function(app) {
+
+export default function(app, upload_user_icons) {
+    const defaultIcon = "default_icon.png"; // Set a default icon URL
 
     /**
      * @swagger
@@ -20,7 +25,7 @@ export default function(app) {
      * @swagger
      * /users/register:
      *   post:
-     *     summary: Register a new user
+     *     summary: Register a new user with a default icon
      *     tags: [Users]
      *     requestBody:
      *       required: true
@@ -64,20 +69,56 @@ export default function(app) {
             console.log("Validation failed: Missing fields");
             return res.status(400).json({ error: "All fields are required" });
         }
+
+        let connection;
+
         try {
+            // this is a transactional operation
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
             // hash the password
             const hashedPassword = await bcrypt.hash(password, 10);
-            // generate a UUID for the user ID
-            const id = uuidv4().replace(/-/g, '');
-            await pool.query(
+            // generate a UUID for the user and icon IDs
+            const userId = uuidv4().replace(/-/g, '');
+            const iconId = uuidv4().replace(/-/g, '');
+
+            // Create the new user into the database
+            await connection.query(
                 "INSERT INTO users (id, username, firstName, lastName, email, password) VALUES (UNHEX(?), ?, ?, ?, ?, ?)",
-                [id, username, firstName, lastName, email, hashedPassword]
+                [userId, username, firstName, lastName, email, hashedPassword]
             );
+
+            // Create the icon for the new user
+            await connection.query(
+                "INSERT INTO user_icons (id, user, icon) VALUES (UNHEX(?), UNHEX(?), ?)",
+                [iconId, userId, defaultIcon]
+            );
+
+            // Commit transaction
+            await connection.commit();
+
             console.log("User registered:", [username, email]);
             res.status(201).json({ message: "User registered successfully" });
         } catch (err) {
-            console.error("DB error registering user:", err);
+            if (connection) {
+                try {
+                    await connection.rollback();
+                } catch (rollbackError) {
+                    console.error("Rollback failed:", rollbackError);
+                }
+            }
+
+            console.error("Error registering user:", err);
             res.status(500).json({ error: "Failed to register user" });
+        } finally {
+            if (connection) {
+                try {
+                    connection.release();
+                } catch (releaseError) {
+                    console.error("Connection release failed:", releaseError);
+                }
+            }
         }
     });
 
@@ -476,6 +517,98 @@ export default function(app) {
             return res.status(500).json({
                 message: "Server error",
             });
+        }
+    });
+
+    app.post("/users/:id/icon", async (req, res) => {
+        try {
+            const userId = req.params.id;
+            if (!userId) {
+                return res.status(400).json({ error: "User ID is required" });
+            }
+            // generate a UUID for the icon ID
+            const iconId = uuidv4().replace(/-/g, '');
+            
+            await pool.query(
+                "INSERT INTO user_icons (id, user, icon) VALUES (UNHEX(?), UNHEX(?), ?)",
+                [iconId, userId, defaultIcon]
+            );
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({
+                message: "Server error",
+            });
+        }
+    });
+
+    app.put("/users/:id/icon", upload_user_icons.single("uploaded_file"), async (req, res) => {
+        let connection;
+        try {
+            if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+            const userId = req.params.id;
+            const newIconName = path.basename(req.file.path);
+
+            if (!userId) {
+                await fs.unlink(path.join(rootPath, `userIcons/${req.file.filename}`)); // delete the uploaded file
+                return res.status(400).json({ error: "User ID is required" });
+            }
+
+            connection = await pool.getConnection();
+            await connection.beginTransaction();
+
+            const [rows] = await connection.query(
+                `
+                SELECT icon
+                FROM user_icons
+                WHERE user = UNHEX(?)
+                `,
+                [userId]
+            );
+
+            if (rows.length === 0) {
+                await connection.rollback();
+                await fs.unlink(path.join(rootPath, `userIcons/${req.file.filename}`)); // delete the uploaded file
+                return res.status(404).json({ error: "User icon record not found" });
+            }
+
+            const previousIconName = rows[0].icon;
+
+            await connection.query(
+                `
+                UPDATE user_icons
+                SET icon = ?,
+                    updated_at = NOW()
+                WHERE user = UNHEX(?)
+                `,
+                [newIconName, userId]
+            );
+
+            // Delete the old icon file if it exists and is not the default icon
+            if (previousIconName && previousIconName !== defaultIcon) {
+                const previousIconFullPath = path.join(rootPath, `userIcons/${previousIconName}`);
+                try {
+                    await fs.access(previousIconFullPath); // Check if the file exists
+                    await fs.unlink(previousIconFullPath); // Delete the file
+                } catch (err) {
+                    console.error("Error deleting previous icon:", err);
+                    // You might want to handle this error differently, depending on your requirements
+                }
+            }
+
+            await connection.commit();
+
+            return res.json({ message: "Icon updated successfully", iconUrl: req.file.path });
+        } catch (err) {
+            console.error(err);
+            await connection.rollback();
+            return res.status(500).json({
+                message: "Server error",
+            });
+        } finally {
+            if (connection) {
+                connection.release();
+            }
         }
     });
 }

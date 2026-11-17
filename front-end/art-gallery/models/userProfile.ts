@@ -4,4 +4,5 @@ export interface UserProfile {
   firstName: string;
   lastName: string;
   email: string;  // optional / nullable
+  userIcon: string | null;  // optional / nullable
 }
