@@ -3,6 +3,8 @@ import type { UserProfile } from '../models/userProfile.ts';
 import Topbar from '../components/topbar/topbar.tsx';
 import { UserContext } from '../contexts/userContext.tsx';
 import { useNavigate } from 'react-router-dom';
+import ProfileIcon from '../components/profileIcon/profileIcon.tsx';
+import './profile.css';
 
 function Profile() {
   // get user from user context
@@ -26,9 +28,10 @@ function Profile() {
     <Topbar/>
     <p>loading...</p>
   </div> : 
-  <div>
+  <div className='profile'>
     <Topbar/>
     <h1>{data.username}</h1>
+    <ProfileIcon allowIconChange={true} diameter={100} />
     <p>Email: {data.email}</p>
     <p>First Name: {data.firstName}</p>
     <p>Last Name: {data.lastName}</p>

@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import './topbar.css'
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../contexts/userContext';
+import ProfileIcon from '../profileIcon/profileIcon';
 
 function Topbar() {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Topbar() {
             <button onClick={() => navigate('/personal-art')}>Personal Art</button>
             <button onClick={() => navigate('/profile')}>Profile</button>
             <button onClick={() => logoutUser()}>Logout</button>
+            <ProfileIcon allowIconChange={false} diameter={36} />
         </div>
     ) : (
         <div className='topbar'>

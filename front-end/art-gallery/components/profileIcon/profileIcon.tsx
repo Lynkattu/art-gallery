@@ -11,7 +11,7 @@ interface props {
 
 function ProfileIcon({ allowIconChange = false, onClick, diameter = 96 }: props) {
     const apiUrl = import.meta.env.VITE_API_URL;
-    const { user } = useContext(UserContext);
+    const { user, setUserIcon } = useContext(UserContext);
     const fileUploadRef = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<string | null>(null);
 
@@ -25,28 +25,30 @@ function ProfileIcon({ allowIconChange = false, onClick, diameter = 96 }: props)
         const file = e.target.files?.[0];
         if (file && user) {
             const response = await changeUserIcon(user.id, file);
+            const data = await response.json();
 
-            if (response.status === 201) {
-                console.log("User icon saved successfully");
+            if (response.status === 200) {
+                console.log("User icon changed successfully");
                 //setImage(URL.createObjectURL(file));
-                //user.userIcon = response.data;
-                //setImage(`${apiUrl}/user-icons/${user.userIcon}?v=${new Date().getTime()}`);
+                console.log(`${apiUrl}/icons/${data.icon}`);
+                setUserIcon(data.icon);
+                setImage(`${apiUrl}/icons/${data.icon}`);
 
             } else {
-                console.error("Failed to save user icon");
+                console.error("Failed to change user icon");
             }
         }
     };
 
     useEffect(() => {
         if(user?.userIcon) {
-            setImage(`${apiUrl}/user-icons/${user.userIcon}?v=${new Date().getTime()}`);
+            setImage(`${apiUrl}/icons/${user.userIcon}`);
         }
 
     }, []);
 
     return (
-        <div className="profile-icon">
+        <div className="profile-icon" style={{ width: `${diameter}px`, height: `${diameter}px` }}>
             <form>
                 {(image) ?
                     <img src={image} style={{ width: `${diameter}px`, height: `${diameter}px` }} alt="Profile Icon" />

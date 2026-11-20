@@ -1,5 +1,7 @@
 .profile-icon {
     position: relative;
+    width: 96px;
+    height: 96px;
 
 }
 
@@ -27,8 +29,10 @@
 
 .profile-icon > form button:disabled {
     cursor: default;
+    background-color: rgba(0, 0, 0, 0.0);
 }
 
 .profile-icon > button:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
+

@@ -88,9 +88,6 @@ async function changeUserIcon(userId: string, iconFile: File) {
 
         const res = await fetch(`http://localhost:5000/users/${userId}/icon`, {
             method: "PUT",
-            headers: {
-                "Content-Type": "multipart/form-data"
-            },
             credentials: "include",
             body: formData
         });

@@ -60,8 +60,14 @@ export const UserAuthProvider = ({ children }: Props) => {
     localStorage.removeItem("user");
   }
 
+  function setUserIcon(userIcon: string) {
+    if (user) {
+      setUser({ ...user, userIcon });
+    }
+  }
+
   return (
-    <UserContext.Provider value={{ user, loginUser, logoutUser }}>
+    <UserContext.Provider value={{ user, loginUser, logoutUser, setUserIcon }}>
       {children}
     </UserContext.Provider>
   );

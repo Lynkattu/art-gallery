@@ -4,5 +4,6 @@ export interface UserContextAuth {
   //isLoggedin: () => boolean;
   loginUser: (email: string, password: string) => Promise<{isSucessful: boolean, message: string}>;
   logoutUser: () => void;
+  setUserIcon: (userIcon: string) => void;
   user: UserProfile | null;
 }

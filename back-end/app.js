@@ -30,6 +30,7 @@ app.use(cors({
 app.use(cookieParser()); // Use cookie-parser middleware to parse cookies
 app.use(express.urlencoded({ limit: "20mb", extended: true }));
 app.use("/images", express.static("images")); // Serve static files from images directory
+app.use("/icons", express.static("userIcons")); // Serve static files from userIcons directory
 app.use("/site_images", express.static("site_images")); // Serve static files from site_images directory
 
 

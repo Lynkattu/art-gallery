@@ -541,7 +541,41 @@ export default function(app, upload_user_icons) {
         }
     });
 
-    app.put("/users/:id/icon", upload_user_icons.single("uploaded_file"), async (req, res) => {
+    /** 
+     * @swagger
+     * /users/{id}/icon:
+     *   put:
+     *     tags: [Users]
+     *     summary: Update a user's icon
+     *     parameters:
+     *       - in: path
+     *         name: id
+     *         schema:
+     *           type: string
+     *         required: true
+     *         description: The ID of the user whose icon to update
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         multipart/form-data:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               uploaded_file:
+     *                 type: string
+     *                 format: binary
+     *     security:
+     *      - bearerAuth: []
+     *     responses:
+     *       200:
+     *         description: Icon updated successfully
+     *       400:
+     *         description: Bad request
+     *       500:
+     *         description: Internal server error
+    */
+   
+    app.put("/users/:id/icon", upload_user_icons.single("uploaded_file"), authentication, async (req, res) => {
         let connection;
         try {
             if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -598,7 +632,7 @@ export default function(app, upload_user_icons) {
 
             await connection.commit();
 
-            return res.json({ message: "Icon updated successfully", iconUrl: req.file.path });
+            return res.json({ message: "Icon updated successfully", icon: newIconName });
         } catch (err) {
             console.error(err);
             await connection.rollback();
