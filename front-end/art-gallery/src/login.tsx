@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 
 import { UserContext } from '../contexts/userContext.tsx';
 
-import Topbar from '../components/topbar/topbar';
+import Topbar from '../components/layout/topbar/topbar.tsx';
 
 function Login() {
   const { loginUser } = useContext(UserContext);

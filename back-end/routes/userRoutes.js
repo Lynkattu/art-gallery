@@ -645,4 +645,28 @@ export default function(app, upload_user_icons) {
             }
         }
     });
+
+    app.post('/users/:id/collections', authentication, async (req, res) => {
+        const userId = req.params.id;
+        const { name, isPublic } = req.body;
+
+        if (!name || isPublic === undefined) {
+            return res.status(400).json({ error: "Collection name is required and isPublic is required" });
+        }
+
+        try {
+            const [result] = await pool.query(
+                `
+                INSERT INTO collections (user_id, name, is_public)
+                VALUES (UNHEX(?), ?, ?)
+                `,
+                [userId, name, isPublic]
+            );
+
+            res.status(201).json({ message: "Collection created successfully", id: result.insertId });
+        } catch (err) {
+            console.error("Error creating collection:", err);
+            res.status(500).json({ message: "Failed to create collection" });
+        }
+    });
 }

@@ -1,5 +1,5 @@
 import './forgotPassword.css';
-import Topbar from '../components/topbar/topbar';
+import Topbar from '../components/layout/topbar/topbar';
 
 import { useState } from 'react';
 import { sendResetLink } from '../api/userAPI';

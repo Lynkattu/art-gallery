@@ -1,5 +1,5 @@
 import "./resetPassword.css";
-import Topbar from '../components/topbar/topbar';
+import Topbar from '../components/layout/topbar/topbar';
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { resetPassword } from "../api/userAPI";

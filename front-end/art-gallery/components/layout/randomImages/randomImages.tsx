@@ -1,7 +1,7 @@
 import './randomImages.css';
 import { useEffect, useState } from 'react';
-import { fetchRandomArtPaths } from '../../api/artAPI.ts';
-import type { ArtPath } from '../../models/artPathModel.ts';
+import { fetchRandomArtPaths } from '../../../api/artAPI.ts';
+import type { ArtPath } from '../../../models/artPathModel.ts';
 import { useNavigate } from "react-router-dom";
 
 

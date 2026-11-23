@@ -1,4 +1,4 @@
-import LineBreakSprite from "../../src/assets/test.svg?react";
+import LineBreakSprite from "../../../src/assets/test.svg?react";
 import "./linebreak.css";
 
 function LineBreak() {

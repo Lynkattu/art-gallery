@@ -1,15 +1,15 @@
 import { useEffect, useState, type JSX } from "react";
 import "./art.css";
 import { useParams } from "react-router-dom";
-import Topbar from "../components/topbar/topbar";
+import Topbar from "../components/layout/topbar/topbar";
 import { fetchArtById, fetchRandomArtsFromUser, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
-import ArtComments from "../components/ArtComments/ArtComments";
-import RandomImages from "../components/randomImages/randomImages";
+import ArtComments from "../components/layout/ArtComments/ArtComments";
+import RandomImages from "../components/layout/randomImages/randomImages";
 import moment from "moment";
-import LineBreak from "../components/lineBreak/lineBreak";
-import TagcardCollection from "../components/tagcardCollection/TagcardCollection";
-import DownloadBt from "../components/downloadBt/downloadBt";
+import LineBreak from "../components/basic/lineBreak/lineBreak";
+import TagcardCollection from "../components/layout/tagcardCollection/TagcardCollection";
+import DownloadBt from "../components/basic/downloadBt/downloadBt";
 
 
 function Art() {

@@ -1,5 +1,5 @@
 import './downloadBt.css'
-import { downloadImage } from '../../api/artAPI'
+import { downloadImage } from '../../../api/artAPI'
 
 interface DownloadBtProps {
     filename: string

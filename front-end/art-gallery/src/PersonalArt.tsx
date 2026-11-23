@@ -4,11 +4,11 @@ import { useContext } from 'react';
 import { UserContext } from '../contexts/userContext.tsx';
 import { useNavigate } from 'react-router';
 
-import Topbar from '../components/topbar/topbar.tsx';
-import PersonalArtSideNav from '../components/personalArtSideNav/personalArtSideNav.tsx';
-import AddNewArt from '../components/addNewArt/addNewArt.tsx';
-import ViewCollection from '../components/viewCollection/viewCollection.tsx';
-import MyArt from '../components/myArt/myArt.tsx'
+import Topbar from '../components/layout/topbar/topbar.tsx';
+import PersonalArtSideNav from '../components/layout/personalArtSideNav/personalArtSideNav.tsx';
+import AddNewArt from '../components/layout/addNewArt/addNewArt.tsx';
+import ViewCollection from '../components/layout/viewCollection/viewCollection.tsx';
+import MyArt from '../components/layout/myArt/myArt.tsx'
 
 function PersonalArt() {
     const { user } = useContext(UserContext);

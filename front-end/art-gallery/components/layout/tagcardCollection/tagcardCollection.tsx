@@ -1,7 +1,7 @@
 import "./tagcardCollection.css";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import {type Art } from "../../models/artModel";
+import {type Art } from "../../../models/artModel";
 
 type Props = {
     tags: string[];

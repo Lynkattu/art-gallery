@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react';
-import ImgUpload from '../imgUpload/imgUpload';
+import ImgUpload from '../../basic/imgUpload/imgUpload.tsx';
 import './addNewArt.css';
 
-import type { Art } from '../../models/artModel';
-import { UserContext } from '../../contexts/userContext.tsx';
-import { postNewArt } from '../../api/artAPI.ts';
+import type { Art } from '../../../models/artModel.ts';
+import { UserContext } from '../../../contexts/userContext.tsx';
+import { postNewArt } from '../../../api/artAPI.ts';
 import { toast, ToastContainer } from 'react-toastify/unstyled';
-import TagInput from '../tagInput/tagInput.tsx';
+import TagInput from '../../basic/tagInput/tagInput.tsx';
 import TagcardCollection from '../tagcardCollection/TagcardCollection.tsx';
 
 

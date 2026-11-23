@@ -1,7 +1,7 @@
 import './userRegister.css';
 import { useState } from "react";
 
-import Topbar from '../components/topbar/topbar';
+import Topbar from '../components/layout/topbar/topbar';
 
 function UserRegister() {
   const [formData, setFormData] = useState({

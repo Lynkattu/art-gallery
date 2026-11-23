@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
 import type { UserProfile } from '../models/userProfile.ts';
-import Topbar from '../components/topbar/topbar.tsx';
+import Topbar from '../components/layout/topbar/topbar.tsx';
 import { UserContext } from '../contexts/userContext.tsx';
 import { useNavigate } from 'react-router-dom';
-import ProfileIcon from '../components/profileIcon/profileIcon.tsx';
+import ProfileIcon from '../components/basic/profileIcon/profileIcon.tsx';
 import './profile.css';
 
 function Profile() {

@@ -1,10 +1,10 @@
 import './home.css'
 import { useEffect, useState } from "react";
 
-import Topbar from "../components/topbar/topbar";
-import Radiobutton from "../components/radiobutton/radiobutton";
-import SearchBar from "../components/searchBar/searchBar";
-import RandomImages from "../components/randomImages/randomImages";
+import Topbar from "../components/layout/topbar/topbar";
+import Radiobutton from "../components/basic/radiobutton/radiobutton";
+import SearchBar from "../components/basic/searchBar/searchBar";
+import RandomImages from "../components/layout/randomImages/randomImages";
 import { ToastContainer } from "react-toastify/unstyled";
 import type { ArtPath } from '../models/artPathModel';
 import { useSearchParams } from 'react-router-dom';

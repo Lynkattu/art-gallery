@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./searchBar.css";
 import { IoMdSearch } from "react-icons/io";
-import type { ArtPath } from "../../models/artPathModel";
+import type { ArtPath } from "../../../models/artPathModel";
 import { useNavigate } from "react-router";
 
 

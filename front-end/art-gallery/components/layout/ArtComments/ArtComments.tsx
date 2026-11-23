@@ -1,8 +1,8 @@
 import "./ArtComments.css";
-import { fetchArtComments, postComment } from "../../api/artAPI";
-import { UserContext } from "../../contexts/userContext";
+import { fetchArtComments, postComment } from "../../../api/artAPI";
+import { UserContext } from "../../../contexts/userContext";
 import { useContext, useEffect, useState } from "react";
-import type { ArtComment } from "../../models/artCommentModel";
+import type { ArtComment } from "../../../models/artCommentModel";
 
 interface ArtCommentsProps {
     artId: string;

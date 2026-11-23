@@ -1,3 +1,5 @@
+const apiUrl = import.meta.env.VITE_API_URL;
+
 // login user
 async function postUserLogin(formData: { email: string; password: string; }) {
     try {
@@ -6,7 +8,7 @@ async function postUserLogin(formData: { email: string; password: string; }) {
             throw new Error("Email and password are required");
         }
 
-        const res = await fetch("http://localhost:5000/users/login", {
+        const res = await fetch(`${apiUrl}/users/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -24,7 +26,7 @@ async function postUserLogin(formData: { email: string; password: string; }) {
 // get authenticated user's profile
 async function getUserProfile () {
     try {
-        const res = await fetch("http://localhost:5000/users/profile", {
+        const res = await fetch(`${apiUrl}/users/profile`, {
             credentials: "include"
         });
         return res;
@@ -42,7 +44,7 @@ async function sendResetLink(email: string) {
             throw new Error("Email is required");
         }
 
-        const res = await fetch("http://localhost:5000/users/forgot-password", {
+        const res = await fetch(`${apiUrl}/users/forgot-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -66,7 +68,7 @@ async function resetPassword(token: string, newPassword: string) {
             throw new Error("Token and new password are required");
         }
 
-        const res = await fetch(`http://localhost:5000/users/reset-password`, {
+        const res = await fetch(`${apiUrl}/users/reset-password`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -86,7 +88,7 @@ async function changeUserIcon(userId: string, iconFile: File) {
         const formData = new FormData();
         formData.append("uploaded_file", iconFile);
 
-        const res = await fetch(`http://localhost:5000/users/${userId}/icon`, {
+        const res = await fetch(`${apiUrl}/users/${userId}/icon`, {
             method: "PUT",
             credentials: "include",
             body: formData
@@ -98,4 +100,21 @@ async function changeUserIcon(userId: string, iconFile: File) {
     }
 }
 
-export { getUserProfile, postUserLogin, sendResetLink, resetPassword, changeUserIcon };
+// post art collection
+async function postArtCollection(userId: string) {
+    try {
+        const res = await fetch(`${apiUrl}/users/${userId}/collections`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        });
+        return res;
+    } catch (error) {
+        console.error("Error posting art collection:", error);
+        throw error;
+    }
+}
+
+export { getUserProfile, postUserLogin, sendResetLink, resetPassword, changeUserIcon, postArtCollection };

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import './profileIcon.css';
-import { changeUserIcon } from '../../api/userAPI';
-import { UserContext } from '../../contexts/userContext';
+import { changeUserIcon } from '../../../api/userAPI';
+import { UserContext } from '../../../contexts/userContext';
 
 interface props {
     allowIconChange?: boolean;

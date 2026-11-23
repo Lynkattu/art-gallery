@@ -1,14 +1,14 @@
 import './myArt.css';
 import { type JSX, useEffect, useState } from 'react';
 
-import type { UserProfile } from '../../models/userProfile';
-import {deleteArt, fetchArtByUser, updateArt} from '../../api/artAPI';
-import type { ArtPath } from '../../models/artPathModel';
+import type { UserProfile } from '../../../models/userProfile.ts';
+import {deleteArt, fetchArtByUser, updateArt} from '../../../api/artAPI.ts';
+import type { ArtPath } from '../../../models/artPathModel.ts';
 import { useNavigate } from 'react-router-dom';
-import type { Art } from '../../models/artModel';
+import type { Art } from '../../../models/artModel.ts';
 import { toast, ToastContainer } from 'react-toastify';
-import TagcardCollection from '../tagcardCollection/TagcardCollection';
-import TagInput from '../tagInput/tagInput.tsx';
+import TagcardCollection from '../tagcardCollection/TagcardCollection.tsx';
+import TagInput from '../../basic/tagInput/tagInput.tsx';
 
 
 type props = {

@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import './topbar.css'
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../contexts/userContext';
-import ProfileIcon from '../profileIcon/profileIcon';
+import { UserContext } from '../../../contexts/userContext';
+import ProfileIcon from '../../basic/profileIcon/profileIcon';
 
 function Topbar() {
     const navigate = useNavigate();

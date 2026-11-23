@@ -93,3 +93,28 @@ comments (
     FOREIGN KEY (user_id) REFERENCES users(id)
         ON DELETE CASCADE
 );
+
+art_collections (
+    id BINARY(16) PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    user_id BINARY(16) NOT NULL,
+    is_public BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+art_collection_arts (
+    art_collection_id BINARY(16),
+    art_id BINARY(16),
+
+    PRIMARY KEY (art_collection_id, art_id),
+
+    FOREIGN KEY (art_collection_id) REFERENCES art_collections(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (art_id) REFERENCES arts(id)
+        ON DELETE CASCADE
+);
