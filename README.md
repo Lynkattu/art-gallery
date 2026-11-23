@@ -1,5 +1,5 @@
 # Art Gallery
-Art gallery is under development, its not responsive and many features are not implemented yet. Art gallery is web application. Anyone can search and view artworks made by any user. Logged users can post new arts. The User can also delete and update their own existing art. Anyone can create new account.
+Art gallery is under development, its not fully responsive and some features are not implemented yet. Art gallery is web application that is used for sharing art. Anyone can search and view artworks made by any user. Logged users can post new arts and comment any arts. The User can also delete and update their own existing art. Anyone can create an account. App uses jwt token authentication. Macine learning is used for art recommendations.
 
 ## Installation
 1. Download project from git.
@@ -45,10 +45,14 @@ DB_PORT = 3306
 DB_HOST = "127.0.0.1"
 <br>
 DB_USER = your database user
-
-7. Frontend starts like any react app with **npm run dev** command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder.
+<br>
+7. Navigate to front-end/art-gallery create .env file. File contains next data:
+<br>
+VITE_API_URL= your api url example http://localhost:5000
+<br>
+8. Frontend starts like any react app with **npm run dev** command. Backend start running also with *npm run dev* command. Note you must run commands under front-end folder or back-end folder. Recommendation-service run by using **python -m uvicorn main:app --reload** command inside recommendation-service folder.
 
 ## API Documentation (Swagger)
 API docementation is created by using swagger.
 1. first start back end
-2. next navigate to http://localhost:5000/api-docs
+2. then navigate to http://localhost:5000/api-docs
