@@ -41,7 +41,8 @@ function ProfileIcon({ allowIconChange = false, onClick, diameter = 96 }: props)
     };
 
     useEffect(() => {
-        if(user?.userIcon) {
+        if(user) {
+            console.log(`${apiUrl}/icons/${user.userIcon}`);
             setImage(`${apiUrl}/icons/${user.userIcon}`);
         }
 
