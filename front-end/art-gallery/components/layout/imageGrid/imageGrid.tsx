@@ -1,6 +1,5 @@
-import './randomImages.css';
+import './imageGrid.css';
 import { useEffect, useState } from 'react';
-import { fetchRandomArtPaths } from '../../../api/artAPI.ts';
 import type { ArtPath } from '../../../models/artPathModel.ts';
 import { useNavigate } from "react-router-dom";
 
@@ -11,28 +10,17 @@ type Props = {
     gridTemplateColumns?: string;
 };
 
-function RandomImages({ imageCount, artPaths, gridTemplateColumns }: Props) {
+function ImageGrid({ imageCount, artPaths, gridTemplateColumns }: Props) {
     const navigate = useNavigate();
 
     const [imagePaths, setImagePaths] = useState<ArtPath[]>([]);
     const gridColumns = gridTemplateColumns || "1fr 1fr 1fr 1fr 1fr 1fr";
     const effectiveImageCount = imageCount || 12; // Default to 12 if not provided
-
-    const loadImages = async () => {
-        const paths = await fetchRandomArtPaths(effectiveImageCount || 0);
-        setImagePaths(paths);
-        console.log(paths);
-    };
     
     useEffect(() => {
-        if (!artPaths || artPaths.length <= 0) {
-            loadImages();
-        } 
-        else if (effectiveImageCount != undefined) {
+        if (artPaths) {
             setImagePaths(artPaths);
         }
-
-
     }, [effectiveImageCount, artPaths]);
 
 
@@ -55,4 +43,4 @@ function RandomImages({ imageCount, artPaths, gridTemplateColumns }: Props) {
     </div>;
 }
 
-export default RandomImages;
+export default ImageGrid;

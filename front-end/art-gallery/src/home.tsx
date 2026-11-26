@@ -4,36 +4,38 @@ import { useEffect, useState } from "react";
 import Topbar from "../components/layout/topbar/topbar";
 import Radiobutton from "../components/basic/radiobutton/radiobutton";
 import SearchBar from "../components/basic/searchBar/searchBar";
-import RandomImages from "../components/layout/randomImages/randomImages";
+import RandomImages from "../components/layout/imageGrid/imageGrid";
 import { ToastContainer } from "react-toastify/unstyled";
-import type { ArtPath } from '../models/artPathModel';
 import { useSearchParams } from 'react-router-dom';
-import { fetchArtBySearch } from '../api/artAPI';
+import { fetchArtBySearch, fetchRandomArtPaths } from '../api/artAPI';
 import Logo from './assets/ArtGalleryLogo1.png'
+import { useQuery } from '@tanstack/react-query';
 
 function Home() {
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
   const search = searchParams.get("search");
+
+  const {data: searchResults, isLoading} = useQuery({
+    queryKey: ['homePageArt', search, type],
+    queryFn: () => {
+      if (type && search) {
+        return fetchArtBySearch(search, type);
+      } else {
+        return fetchRandomArtPaths(30);
+      }
+    },
+    enabled: true,
+  });
    
   const [selectedValue, setSelectedValue] = useState<string | null>(null);
   const [imageCount] = useState<number>(30); // Number of random arts to fetch and display
-  const [searchResults, setSearchResults] = useState<ArtPath[]>([]);
   const items = [{title: "Art"}, {title: "Artist"}];
 
-  const fetchArt = async (type: string, search: string) => {
-    const fetchedArt = await fetchArtBySearch(search, type);
-    if (fetchedArt.length > 0) {
-      console.log("Search results: ", fetchedArt);
-      setSearchResults(fetchedArt);
-    }
-  };
 
   useEffect(() => {
-    if (type && search) {
-      setSelectedValue(type);
-      fetchArt(type, search);
-    }
+    if (type) setSelectedValue(type);
+    console.log("Search: ", search, " Type: ", type);
   }, [type, search]);
 
   return (
@@ -44,18 +46,26 @@ function Home() {
         <h1>Art Gallery</h1>
       </div>
       <div className='search'>
-        <SearchBar type={selectedValue} setSearchResults={setSearchResults} />
+        <SearchBar type={selectedValue} />
         <Radiobutton
           onSelect={setSelectedValue} 
           items={items} 
             defaultItem={selectedValue ? selectedValue : items[0].title}
           />
         </div>
-        <div className="random-arts">
-          {searchResults.length > 0 && search?.length !== 0 
-          ? <RandomImages artPaths={searchResults} /> 
-          : <RandomImages imageCount={imageCount} />}
-        </div>
+
+        {isLoading ? <p>Loading...</p> : null}
+
+        {searchResults && searchResults.length === 0 ? <p>No results found.</p> : null}
+
+        {searchResults && searchResults.length > 0 &&
+          <div className="random-arts">
+            {search 
+            ? <RandomImages artPaths={searchResults} /> 
+            : <RandomImages artPaths={searchResults} imageCount={imageCount} />}
+          </div>
+        }
+
         <ToastContainer />
 
       </div>

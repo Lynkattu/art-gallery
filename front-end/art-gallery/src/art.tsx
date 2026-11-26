@@ -5,7 +5,7 @@ import Topbar from "../components/layout/topbar/topbar";
 import { fetchArtById, fetchRandomArtsFromUser, fetchSimilarArts, type PostArtResult } from "../api/artAPI";
 import type { ArtPath } from "../models/artPathModel";
 import ArtComments from "../components/layout/ArtComments/ArtComments";
-import RandomImages from "../components/layout/randomImages/randomImages";
+import RandomImages from "../components/layout/imageGrid/imageGrid";
 import moment from "moment";
 import LineBreak from "../components/basic/lineBreak/lineBreak";
 import TagcardCollection from "../components/layout/tagcardCollection/TagcardCollection";

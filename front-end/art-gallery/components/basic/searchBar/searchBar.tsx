@@ -1,12 +1,10 @@
 import { useState } from "react";
 import "./searchBar.css";
 import { IoMdSearch } from "react-icons/io";
-import type { ArtPath } from "../../../models/artPathModel";
 import { useNavigate } from "react-router";
 
 
 type Props = {
-  setSearchResults?: React.Dispatch<React.SetStateAction<ArtPath[]>>;
   type: string | null;
 }
 

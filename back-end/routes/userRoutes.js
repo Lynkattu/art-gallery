@@ -240,7 +240,16 @@ export default function(app, upload_user_icons) {
             const userIdBuffer = Buffer.from(id, "hex");
             // get id and password hash from db by email
             const [rows] = await pool.query(
-                "SELECT HEX(id) AS id, email, username, firstName, lastName FROM users WHERE id = ?",
+                `SELECT HEX(users.id) AS id, 
+                    users.email, 
+                    users.username, 
+                    users.firstName, 
+                    users.lastName, 
+                    user_icons.icon AS userIcon
+                FROM users 
+                LEFT JOIN user_icons ON users.id = user_icons.user
+                WHERE users.id = ?
+                `,
                 [userIdBuffer]
             );
             // check if user exists

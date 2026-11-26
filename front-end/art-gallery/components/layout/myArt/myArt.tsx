@@ -1,14 +1,14 @@
 import './myArt.css';
-import { type JSX, useEffect, useState } from 'react';
+import { type JSX, useState } from 'react';
 
 import type { UserProfile } from '../../../models/userProfile.ts';
 import {deleteArt, fetchArtByUser, updateArt} from '../../../api/artAPI.ts';
 import type { ArtPath } from '../../../models/artPathModel.ts';
-import { useNavigate } from 'react-router-dom';
 import type { Art } from '../../../models/artModel.ts';
 import { toast, ToastContainer } from 'react-toastify';
 import TagcardCollection from '../tagcardCollection/TagcardCollection.tsx';
 import TagInput from '../../basic/tagInput/tagInput.tsx';
+import { useQuery } from '@tanstack/react-query';
 
 
 type props = {
@@ -16,7 +16,11 @@ type props = {
 }
 
 function MyArt({ user }: props) {
-    const navigate = useNavigate();
+    const {isLoading} = useQuery({
+        queryKey: ['userArt', user?.id], 
+        queryFn: getUserArt,
+        enabled: !!user, // only run the query if user is not null
+    });
 
     const [userArts, setUserArts] = useState<ArtPath[] | null>(null);
     const [selectedArt, setSelectedArt] = useState<ArtPath | null>(null);
@@ -97,15 +101,6 @@ function MyArt({ user }: props) {
         getUserArt();
     };
 
-    useEffect(() => {
-        if(user != null) {
-            getUserArt();
-        } 
-        else {
-            navigate('/login'); // redirect to login if not authenticated
-        }
-    }, [])
-
     async function getUserArt() {
         if (user != null) {
             const arts = await fetchArtByUser(user.id);
@@ -137,6 +132,8 @@ function MyArt({ user }: props) {
 
     return <div className="my-art">
         <div className="my-art-collection">
+            {isLoading && <p>Loading...</p>}
+            
             <ul>
                 {userArts?.map((art, idx) => (
                     <li key={idx} onClick={() => handleSelection(art)}>

@@ -16,7 +16,7 @@
     "@mui/material": "^7.3.8",
     "@tanstack/react-query": "^5.108.4",
     "moment": "^2.30.1",
-    "node-modules": "^1.0.1",
+    "node-modules": "^0.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-icons": "^5.5.0",
